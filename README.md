@@ -50,16 +50,30 @@ template:
 variables:
   package: 'PackageName'
 
-test:0.6:
-  image: juliagpu/julia:v0.6
-  <<: *test_definition
-
 test:0.7:
   image: juliagpu/julia:v0.7
   <<: *test_definition
 
 test:dev:
   image: juliagpu/julia:dev
+  <<: *test_definition
+```
+
+For testing 0.6, you'd need to use the old package manager:
+
+```yaml
+.test_template: &test_definition
+  script:
+    - julia -e 'versioninfo()'
+    # actual testing
+    - julia -e "Pkg.init();
+                symlink(\"$CI_PROJECT_DIR\", joinpath(Pkg.dir(), \"$package\"));
+                Pkg.resolve();
+                Pkg.build(\"$package\");
+                Pkg.test(\"$package\"; coverage=true)"
+
+test:0.6:
+  image: juliagpu/julia:v0.6
   <<: *test_definition
 ```
 
