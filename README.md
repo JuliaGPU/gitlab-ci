@@ -20,8 +20,6 @@ On the page of your new repo:
 * runners settings: make sure available group runners are available and enabled,
   and shared runners are disabled
 
-* general pipeline settings: enable the Simplecov coverage regex (optional)
-
 * secret variables: provide a `CODECOV_TOKEN` (optional)
 
 
@@ -33,16 +31,24 @@ template:
   script:
     - julia -e 'using InteractiveUtils; versioninfo()'
     # actual testing
-    - julia -e "using Pkg; pkg\"develop $CI_PROJECT_DIR\""
-    - julia -e "using Pkg; pkg\"build $CI_PROJECT_NAME\""
-    - julia -e "using Pkg; pkg\"test --coverage $CI_PROJECT_NAME\""
-    # coverage (CI/CD settings: enable Simplecov regex parsing,
-    #                           add CODECOV_TOKEN secret variable)
-    - julia -e 'using Pkg; pkg"add Coverage"'
+    # TODO: `Pkg.build(); Pkg.test(; coverage=true)` once that works
+    - julia -e "using Pkg;
+                Pkg.develop(\"$CI_PROJECT_DIR\");
+                Pkg.build(\"$package\");
+                Pkg.test(\"$package\"; coverage=true)"
+    # coverage
+    - julia -e 'using Pkg; Pkg.add("Coverage")'
     - julia -e 'using Coverage;
                 cl, tl = get_summary(process_folder());
                 println("(", cl/tl*100, "%) covered");
                 Codecov.submit_local(process_folder(), ".")'
+    # documentation
+    - julia -e 'using Pkg; Pkg.add("Documenter")'
+    - julia docs/make.jl
+  coverage: '/\(\d+.\d+\%\) covered/'
+
+variables:
+  package: 'PackageName'
 
 test:0.6:
   image: juliagpu/julia:v0.6
