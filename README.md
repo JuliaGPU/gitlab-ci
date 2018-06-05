@@ -17,12 +17,12 @@ Your project needs to be part of the GitLab JuliaGPU group:
 
 On the page of your new repo:
 
-* general pipeline settings: enable the Simplecov coverage regex
-
-* secret variables: provide a CODECOV_TOKEN
-
 * runners settings: make sure available group runners are available and enabled,
   and shared runners are disabled
+
+* general pipeline settings: enable the Simplecov coverage regex (optional)
+
+* secret variables: provide a `CODECOV_TOKEN` (optional)
 
 
 Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
@@ -32,9 +32,17 @@ template:
 .test_template: &test_definition
   script:
     - julia -e 'using InteractiveUtils; versioninfo()'
+    # actual testing
     - julia -e "using Pkg; pkg\"develop $CI_PROJECT_DIR\""
     - julia -e "using Pkg; pkg\"build $CI_PROJECT_NAME\""
-    - julia -e "using Pkg; pkg\"test $CI_PROJECT_NAME\""
+    - julia -e "using Pkg; pkg\"test --coverage $CI_PROJECT_NAME\""
+    # coverage (CI/CD settings: enable Simplecov regex parsing,
+    #                           add CODECOV_TOKEN secret variable)
+    - julia -e 'using Pkg; pkg"add Coverage"'
+    - julia -e 'using Coverage;
+                cl, tl = get_summary(process_folder());
+                println("(", cl/tl*100, "%) covered");
+                Codecov.submit_local(process_folder(), ".")'
 
 test:0.6:
   image: juliagpu/julia:v0.6
