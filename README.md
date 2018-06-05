@@ -1,18 +1,32 @@
-JuliaGPU Docker containers for CI
-=================================
+# JuliaGPU GitLab CI
 
-The Docker recipes in this repository are used by JuliaGPU CI runners, e.g., as
-used by GitLab CI/CD. The following images are built by the `build.sh` script:
+This repository contains instructions and resources related to the GitLab CI
+infrastructure for the JuliaGPU organization.
 
-* `juliagpu/julia:v0.6`
-* `juliagpu/julia:v0.7`
-* `juliagpu/julia:dev`
 
-You should provide these images locally, to be used by e.g. a GitLab runner with
-the `pull_policy = "if-not-present"` configuration set.
+## Quick start
 
-After pointing GitLab CI/CD to your runner, you can then use the following
-sample `.gitlab-ci.yml` file to build using these images:
+Your project needs to be part of the GitLab JuliaGPU group:
+
+* request permission to join the [GitLab JuliaGPU
+  group](https://gitlab.com/JuliaGPU)
+
+* import your project (*New Project*, *CI/CD for external repo*), making sure
+  you import it to the JuliaGPU group and not your own account
+
+
+On the page of your new repo:
+
+* general pipeline settings: enable the Simplecov coverage regex
+
+* secret variables: provide a CODECOV_TOKEN
+
+* runners settings: make sure available group runners are available and enabled,
+  and shared runners are disabled
+
+
+Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
+template:
 
 ```yaml
 .test_template: &test_definition
@@ -34,3 +48,24 @@ test:dev:
   image: juliagpu/julia:dev
   <<: *test_definition
 ```
+
+
+## Group runners
+
+The following runners are shared with the JuliaGPU group:
+
+* `hydor.elis.ugent.be`: Pascal GTX 1080, CUDA 9.1, 64-bit Linux
+
+
+## Docker images
+
+The following images are available:
+
+* `juliagpu/julia:v0.6`
+* `juliagpu/julia:v0.7`
+* `juliagpu/julia:dev`
+
+These images need to be build on the system where the GitLab runner is deployed
+(see `images/build.sh`), configured with the `pull_policy = "if-not-present"`.
+Furthermore, the runner should use the NVIDIA docker runtime, via `runtime =
+"nvidia"`.
