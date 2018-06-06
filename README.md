@@ -36,15 +36,12 @@ template:
                 Pkg.develop(\"$CI_PROJECT_DIR\");
                 Pkg.build(\"$package\");
                 Pkg.test(\"$package\"; coverage=true)"
-    # coverage
+    # coverage (needs CODECOV_TOKEN secret variable)
     - julia -e 'using Pkg; Pkg.add("Coverage")'
     - julia -e 'using Coverage;
                 cl, tl = get_summary(process_folder());
                 println("(", cl/tl*100, "%) covered");
                 Codecov.submit_local(process_folder(), ".")'
-    # documentation
-    - julia -e 'using Pkg; Pkg.add("Documenter")'
-    - julia docs/make.jl
   coverage: '/\(\d+.\d+\%\) covered/'
 
 variables:
@@ -71,6 +68,13 @@ For testing 0.6, you'd need to use the old package manager:
                 Pkg.resolve();
                 Pkg.build(\"$package\");
                 Pkg.test(\"$package\"; coverage=true)"
+    # coverage (needs CODECOV_TOKEN secret variable)
+    - julia -e 'using Pkg; Pkg.add("Coverage")'
+    - julia -e 'using Coverage;
+                cl, tl = get_summary(process_folder());
+                println("(", cl/tl*100, "%) covered");
+                Codecov.submit_local(process_folder(), ".")'
+  coverage: '/\(\d+.\d+\%\) covered/'
 
 test:0.6:
   image: juliagpu/julia:v0.6
