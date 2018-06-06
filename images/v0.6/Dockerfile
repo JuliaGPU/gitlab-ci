@@ -2,9 +2,35 @@ FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 
 MAINTAINER Tim Besard <tim.besard@gmail.com>
 
-RUN apt-get update && \
-    apt-get install --yes --no-install-recommends curl && \
-    apt-get clean && \
-rm -rf /var/lib/apt/lists/*
 
-RUN curl -s -L https://julialang-s3.julialang.org/bin/linux/x64/0.6/julia-0.6.3-linux-x86_64.tar.gz | tar -C /usr -x -z --strip-components=1 -f -
+## checkout
+
+WORKDIR /opt
+
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+                    # basic stuff
+                    build-essential ca-certificates \
+                    # Julia
+                    cmake curl gfortran git m4 python && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/JuliaLang/julia.git && \
+    cd julia && \
+git checkout v0.6.3
+
+
+## build
+
+WORKDIR /opt/julia
+
+RUN make all -j$(nproc) \
+        MARCH=x86-64 \
+        JULIA_CPU_TARGET=x86-64 && \
+rm -rf deps/scratch deps/srccache usr-staging
+
+
+## execution
+
+RUN ln -s /opt/julia/usr/bin/julia /usr/bin/julia
