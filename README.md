@@ -81,6 +81,69 @@ test:0.6:
   <<: *test_definition
 ```
 
+If you want more control over individual steps, you can divide the process in
+stages and pass files between them:
+
+```yaml
+before_script:
+  - julia -e 'using InteractiveUtils; versioninfo()'
+
+variables:
+  JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
+  package: 'PackageName'
+
+stages:
+  - test
+  - postprocess
+
+
+## testing
+
+.test_template: &pkg3_test_template
+  script:
+    - mkdir $JULIA_DEPOT_PATH # Pkg3.jl#325
+    - julia -e "using Pkg;
+                Pkg.develop(\"$CI_PROJECT_DIR\");
+                Pkg.build(\"$package\");
+                Pkg.test(\"$package\"; coverage=true)"
+  artifacts:
+    paths:
+      - .julia/
+      - deps/ext.jl
+      - src/*.cov
+      - src/*/*.cov # gitlab-runner#2620
+
+test:dev:
+  stage: test
+  image: juliagpu/julia:dev
+  <<: *pkg3_test_template
+
+
+## post-processing
+
+coverage:
+  stage: postprocess
+  image: juliagpu/julia:dev
+  dependencies:
+    - test:dev
+  script:
+    - julia -e 'using Pkg; Pkg.add("Coverage")'
+    - julia -e 'using Coverage;
+                cl, tl = get_summary(process_folder());
+                println("(", cl/tl*100, "%) covered");
+                Codecov.submit_local(process_folder(), ".")'
+  coverage: '/\(\d+.\d+\%\) covered/'
+
+documentation:
+  stage: postprocess
+  image: juliagpu/julia:dev
+  dependencies:
+    - test:dev
+  script:
+    - julia -e 'using Pkg; Pkg.add("Documenter")'
+    - julia docs/make.jl
+```
+
 
 ## Group runners
 
