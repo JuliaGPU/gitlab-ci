@@ -84,7 +84,8 @@ test:0.6:
 ```
 
 If you want more control over individual steps, you can divide the process in
-stages and pass files between them:
+stages and pass files between them. This has the advantage that you can download
+each job's artifacts for local inspection.
 
 ```yaml
 before_script:
