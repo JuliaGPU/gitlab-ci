@@ -121,7 +121,7 @@ test:dev:
 
 ## post-processing
 
-coverage:
+coverage: # needs CODECOV_TOKEN secret variable if you want to deploy
   stage: postprocess
   image: juliagpu/julia:dev
   dependencies:
@@ -134,7 +134,7 @@ coverage:
                 Codecov.submit_local(process_folder(), ".")'
   coverage: '/\(\d+.\d+\%\) covered/'
 
-documentation:
+documentation: # needs DOCUMENTER_KEY secret variable if you want to deploy
   stage: postprocess
   image: juliagpu/julia:dev
   dependencies:
