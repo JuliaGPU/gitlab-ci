@@ -15,14 +15,17 @@ Your project needs to be part of the GitLab JuliaGPU group:
   you import it to the JuliaGPU group and not your own account
 
 
-On the page of your new repo:
+On the settings page of your new repo:
 
-* general settings: change the project visibility to `Public`
+* general: change the project visibility to `Public`
 
-* runners settings: make sure available group runners are available and enabled,
-  and shared runners are disabled
+* repository -> protected branches: unprotect the `master` branch, or mirroring
+  can break in the event of forced pushes
 
-* secret variables: provide a `CODECOV_TOKEN` (optional)
+* CI/CD -> runners settings: make sure available group runners are available and
+  enabled, and shared runners are disabled
+
+* Ci/CD -> secret variables: provide a `CODECOV_TOKEN` (optional)
 
 
 Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
