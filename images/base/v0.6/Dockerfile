@@ -1,6 +1,4 @@
-FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
-
-MAINTAINER Tim Besard <tim.besard@gmail.com>
+FROM ubuntu:16.04
 
 
 ## checkout
@@ -33,4 +31,5 @@ rm -rf deps/scratch deps/srccache usr-staging
 
 ## execution
 
-RUN ln -s /opt/julia/usr/bin/julia /usr/bin/julia
+RUN ln -s /opt/julia/usr/bin/julia       /usr/bin/julia && \
+    ln -s /opt/julia/usr/bin/julia-debug /usr/bin/julia-debug

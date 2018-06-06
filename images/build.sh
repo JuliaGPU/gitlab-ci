@@ -1,5 +1,9 @@
 #!/bin/sh -e
 
-for julia in */; do
-    docker build $julia --tag juliagpu/julia:$(basename $julia)
+for ver in base/*; do
+    docker build $ver --tag base/julia:$(basename $ver)
+done
+
+for ver in derived/*; do
+    docker build $ver --tag juliagpu/julia:$(basename $ver)
 done

@@ -162,6 +162,9 @@ The following images are available:
 * `juliagpu/julia:v0.6`
 * `juliagpu/julia:v0.7`
 * `juliagpu/julia:dev`
+* `juliagpu/julia:v0.6-opencl`
+* `juliagpu/julia:v0.7-opencl`
+* `juliagpu/julia:dev-opencl`
 
 These images need to be build on the system where the GitLab runner is deployed
 (see `images/build.sh`), configured with the `pull_policy = "if-not-present"`.
