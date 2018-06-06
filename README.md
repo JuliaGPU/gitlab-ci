@@ -17,6 +17,8 @@ Your project needs to be part of the GitLab JuliaGPU group:
 
 On the page of your new repo:
 
+* general settings: change the project visibility to `Public`
+
 * runners settings: make sure available group runners are available and enabled,
   and shared runners are disabled
 
