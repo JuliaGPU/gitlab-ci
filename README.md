@@ -32,6 +32,10 @@ Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
 template:
 
 ```yaml
+variables:
+  JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
+  package: 'PackageName'
+
 .test_template: &test_definition
   script:
     - julia -e 'using InteractiveUtils; versioninfo()'
@@ -49,9 +53,6 @@ template:
                 Codecov.submit_local(process_folder(), ".")'
   coverage: '/\(\d+.\d+\%\) covered/'
 
-variables:
-  package: 'PackageName'
-
 test:0.7:
   image: juliagpu/julia:v0.7
   <<: *test_definition
@@ -64,6 +65,10 @@ test:dev:
 For testing 0.6, you'd need to use the old package manager:
 
 ```yaml
+variables:
+  JULIA_PKGDIR: "$CI_PROJECT_DIR/.julia/"
+  package: 'PackageName'
+
 .test_template: &test_definition
   script:
     - julia -e 'versioninfo()'
