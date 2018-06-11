@@ -9,5 +9,5 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /opt/julia/usr/bin/julia       /usr/bin/julia && \
-    ln -s /opt/julia/usr/bin/julia-debug /usr/bin/julia-debug
+RUN ln -s /opt/julia/bin/julia       /usr/bin/julia && \
+    ln -s /opt/julia/bin/julia-debug /usr/bin/julia-debug
