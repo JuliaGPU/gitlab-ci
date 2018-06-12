@@ -2,7 +2,6 @@
 
 # either rebuild all base images, or let the user specify
 if [[ "$#" -eq 0 ]]; then
-    echo "no args"
     IMAGES=$(ls base/*)
     IMAGES=()
     for base in base/*; do
