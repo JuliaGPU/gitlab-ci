@@ -5,7 +5,7 @@ COPY --from=base/julia:v0.7 /opt/julia /opt/julia
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
                     # essential tools
-                    curl git && \
+                    ca-certificates curl git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

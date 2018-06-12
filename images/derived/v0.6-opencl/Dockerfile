@@ -7,7 +7,7 @@ RUN apt-get update && \
                     # libraries used by built library
                     libgfortran3 \
                     # essential tools
-                    curl git && \
+                    ca-certificates curl git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
