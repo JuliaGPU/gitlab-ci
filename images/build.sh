@@ -18,4 +18,3 @@ for base in ${IMAGES[@]}; do
         docker build --quiet $derived --tag juliagpu/julia:$(basename $derived)
     done
 done
-
