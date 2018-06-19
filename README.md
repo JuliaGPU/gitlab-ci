@@ -173,8 +173,14 @@ The following images are available:
 * `juliagpu/julia:v0.6-opencl`
 * `juliagpu/julia:v0.7-opencl`
 * `juliagpu/julia:dev-opencl`
+* `juliagpu/julia:v0.6-opengl`
+* `juliagpu/julia:v0.7-opengl`
+* `juliagpu/julia:dev-opengl`
 
 These images need to be build on the system where the GitLab runner is deployed
 (see `images/build.sh`), configured with the `pull_policy = "if-not-present"`.
 Furthermore, the runner should use the NVIDIA docker runtime, via `runtime =
-"nvidia"`.
+"nvidia"`. For the OpenGL images, there should be an X server running on display
+`:0` (hard-coded in the Dockerfile, as the `environment` flag in the runner
+config doesn't seem to work), and the runner should mount `/tmp/.X11-unix` in
+the container (i.e., `volumes = [/tmp/.X11-unix:/tmp/.X11-unix:ro"]`).
