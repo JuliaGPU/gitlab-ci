@@ -28,7 +28,5 @@ RUN make all -j$(nproc) \
         JULIA_CPU_TARGET=x86-64 && \
     rm -rf deps/scratch deps/srccache usr-staging
 
-RUN cp -L /usr/lib/x86_64-linux-gnu/libgfortran.so.3 /opt/julia/usr/lib/
-
 RUN ln -s /opt/julia/usr/bin/julia       /usr/bin/julia && \
     ln -s /opt/julia/usr/bin/julia-debug /usr/bin/julia-debug

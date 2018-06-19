@@ -9,7 +9,9 @@ COPY --from=base /opt/julia /opt/julia
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
-                    # essential tools
+                    # libraries \
+                    libgfortran3 libquadmath0 \
+                    # tools
                     ca-certificates curl git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
