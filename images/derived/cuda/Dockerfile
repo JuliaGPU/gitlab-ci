@@ -1,11 +1,14 @@
+ARG base
+
+FROM juliagpu/julia:${base} as base
+
+
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 
-COPY --from=base/julia:dev /opt/julia /opt/julia
+COPY --from=base /opt/julia /opt/julia
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
-                    # libraries used by built library
-                    libgfortran3 \
                     # essential tools
                     ca-certificates curl git && \
     apt-get clean && \

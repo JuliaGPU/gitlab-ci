@@ -167,9 +167,9 @@ The following runners are shared with the JuliaGPU group:
 
 The following images are available:
 
-* `juliagpu/julia:v0.6`
-* `juliagpu/julia:v0.7`
-* `juliagpu/julia:dev`
+* `juliagpu/julia:v0.6-cuda`
+* `juliagpu/julia:v0.7-cuda`
+* `juliagpu/julia:dev-cuda`
 * `juliagpu/julia:v0.6-opencl`
 * `juliagpu/julia:v0.7-opencl`
 * `juliagpu/julia:dev-opencl`

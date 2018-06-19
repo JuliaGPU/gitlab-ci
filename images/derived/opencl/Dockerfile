@@ -1,11 +1,14 @@
+ARG base
+
+FROM juliagpu/julia:${base} as base
+
+
 FROM nvidia/opencl:devel-ubuntu16.04
 
-COPY --from=base/julia:v0.6 /opt/julia /opt/julia
+COPY --from=base /opt/julia /opt/julia
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
-                    # libraries used by built library
-                    libgfortran3 \
                     # essential tools
                     ca-certificates curl git && \
     apt-get clean && \
