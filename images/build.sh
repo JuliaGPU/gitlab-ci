@@ -15,7 +15,7 @@ for base in ${IMAGES[@]}; do
     base_tree=base/$base
     base_tag=juliagpu/julia:$base
 
-    #docker build --quiet --no-cache $base_tree --tag $base_tag
+    docker build --quiet --no-cache $base_tree --tag $base_tag
 
     for derived_tree in derived/*; do
         derived=$(basename $derived_tree)
