@@ -29,22 +29,21 @@ On the settings page of your new repo:
 
 
 Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
-template:
+template (see below for a list of all available images):
 
 ```yaml
 variables:
   JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
-  package: 'PackageName'
 
 .test_template: &test_definition
   script:
-    - julia -e 'using InteractiveUtils; versioninfo()'
+    - julia -e 'using InteractiveUtils;
+                versioninfo()'
     # actual testing
-    # TODO: `Pkg.build(); Pkg.test(; coverage=true)` once that works
     - julia -e "using Pkg;
-                Pkg.develop(\"$CI_PROJECT_DIR\");
-                Pkg.build(\"$package\");
-                Pkg.test(\"$package\"; coverage=true)"
+                Pkg.instantiate();
+                Pkg.build();
+                Pkg.test(; coverage=true);"
     # coverage (needs CODECOV_TOKEN secret variable)
     - julia -e 'using Pkg; Pkg.add("Coverage")'
     - julia -e 'using Coverage;
@@ -97,11 +96,11 @@ each job's artifacts for local inspection.
 
 ```yaml
 before_script:
-  - julia -e 'using InteractiveUtils; versioninfo()'
+  - julia -e 'using InteractiveUtils;
+              versioninfo()'
 
 variables:
   JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
-  package: 'PackageName'
 
 stages:
   - test
@@ -114,11 +113,12 @@ stages:
   script:
     - mkdir $JULIA_DEPOT_PATH # Pkg3.jl#325
     - julia -e "using Pkg;
-                Pkg.develop(\"$CI_PROJECT_DIR\");
-                Pkg.build(\"$package\");
-                Pkg.test(\"$package\"; coverage=true)"
+                Pkg.instantiate();
+                Pkg.build();
+                Pkg.test(; coverage=true);"
   artifacts:
     paths:
+      - Manifest.toml
       - .julia/
       - deps/ext.jl
       - src/*.cov
@@ -138,7 +138,8 @@ coverage: # needs CODECOV_TOKEN secret variable if you want to deploy
   dependencies:
     - test:dev
   script:
-    - julia -e 'using Pkg; Pkg.add("Coverage")'
+    - julia -e 'using Pkg;
+                Pkg.add("Coverage")'
     - julia -e 'using Coverage;
                 cl, tl = get_summary(process_folder());
                 println("(", cl/tl*100, "%) covered");
@@ -151,9 +152,13 @@ documentation: # needs DOCUMENTER_KEY secret variable if you want to deploy
   dependencies:
     - test:dev
   script:
-    - julia -e 'using Pkg; Pkg.add("Documenter")'
+    - julia -e 'using Pkg;
+                Pkg.add("Documenter")'
     - julia docs/make.jl
 ```
+
+For more inspiration, look at the test rules for existing projects (eg.
+CUDAnative.jl, LLVM.jl, GPUArrays.jl, ...).
 
 
 ## Group runners
