@@ -1,7 +1,8 @@
 # JuliaGPU GitLab CI
 
 This repository contains instructions and resources related to the GitLab CI
-infrastructure for the JuliaGPU organization.
+infrastructure for the JuliaGPU organization. It can be used to add GPU CI
+to Julia packages, as long as there's a publicly-accessible git repository.
 
 
 ## Quick start
