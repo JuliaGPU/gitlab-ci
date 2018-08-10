@@ -53,8 +53,8 @@ variables:
                 Codecov.submit_local(process_folder(), ".")'
   coverage: '/\(\d+.\d+\%\) covered/'
 
-test:0.7:
-  image: juliagpu/julia:v0.7
+test:1.0:
+  image: juliagpu/julia:v1.0
   <<: *test_definition
 
 test:dev:
@@ -175,12 +175,15 @@ The following images are available:
 
 * `juliagpu/julia:v0.6-cuda`
 * `juliagpu/julia:v0.7-cuda`
+* `juliagpu/julia:v1.0-cuda`
 * `juliagpu/julia:dev-cuda`
 * `juliagpu/julia:v0.6-opencl`
 * `juliagpu/julia:v0.7-opencl`
+* `juliagpu/julia:v1.0-opencl`
 * `juliagpu/julia:dev-opencl`
 * `juliagpu/julia:v0.6-opengl`
 * `juliagpu/julia:v0.7-opengl`
+* `juliagpu/julia:v1.0-opengl`
 * `juliagpu/julia:dev-opengl`
 
 These images need to be build on the system where the GitLab runner is deployed
