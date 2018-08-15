@@ -10,7 +10,9 @@ COPY --from=base /opt/julia /opt/julia
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
                     # tools
-                    ca-certificates curl git && \
+                    ca-certificates curl git \
+                    # common package dependencies
+                    build-essential gfortran && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
