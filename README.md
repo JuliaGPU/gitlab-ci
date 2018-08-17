@@ -44,12 +44,12 @@ stages:
   - postprocess
 
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/common.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_v0.7.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_v1.0.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_dev.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/postprocess_coverage.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/postprocess_documentation.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/common.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_v0.7.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_v1.0.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_dev.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/postprocess_coverage.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/postprocess_documentation.yml'
 
 test:dev:
   allow_failure: true
@@ -69,23 +69,25 @@ The following runners are shared with the JuliaGPU group:
 
 ## Docker images
 
-The following images are available:
+Images are named according to `juliagpu/julia:$VERSION-$TAG`, with the following
+versions:
 
-* `juliagpu/julia:v0.6-cuda`
-* `juliagpu/julia:v0.7-cuda`
-* `juliagpu/julia:v1.0-cuda`
-* `juliagpu/julia:dev-cuda`
-* `juliagpu/julia:v0.6-opencl`
-* `juliagpu/julia:v0.7-opencl`
-* `juliagpu/julia:v1.0-opencl`
-* `juliagpu/julia:dev-opencl`
-* `juliagpu/julia:v0.6-opengl`
-* `juliagpu/julia:v0.7-opengl`
-* `juliagpu/julia:v1.0-opengl`
-* `juliagpu/julia:dev-opengl`
+* `v0.6`: daily build from the `release-0.6` branch
+* `v0.7`: downloaded from the Julia homepage
+* `v1.0`: downloaded from the Julia homepage
+* `dev`: daily build from the `master` branch
 
-When using the templates from this repository, you only need to specify the
-trailing tag (eg. `-cuda`) using the CI_IMAGE_TAG variable.
+When using the templates from this repository, you only need to select one of
+the following tags using the `CI_IMAGE_TAG` variable:
+
+* `plain`: `ubuntu:16.04` image
+* `cuda`: `nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04`
+* `opencl`: `nvidia/opencl:devel-ubuntu16.04` image
+* `opengl`: `nvidia/opengl:1.0-glvnd-devel-ubuntu16.04` image
+
+All images come with essential compiler utilities, but few other packages. If
+you are missing a package, either install it as part of the build process, or
+file an issue here.
 
 Note that we don't push these images to a Docker registry, but build them on the
 the system where the GitLab runner is deployed (see `images/build.sh`),
