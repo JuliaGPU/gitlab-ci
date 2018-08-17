@@ -7,7 +7,10 @@ to Julia packages, as long as there's a publicly-accessible git repository.
 
 ## Quick start
 
-Your project needs to be part of the GitLab JuliaGPU group:
+You need to be the owner if your repository, or Gitlab will fail to add a
+webhook.
+
+Your project also needs to be part of the GitLab JuliaGPU group:
 
 * request permission to join the [GitLab JuliaGPU
   group](https://gitlab.com/JuliaGPU)
@@ -29,137 +32,32 @@ On the settings page of your new repo:
 * Ci/CD -> secret variables: provide a `CODECOV_TOKEN` (optional)
 
 
-Now add a `.gitlab-ci.yml` in the root of your repo, based on the following
-template (see below for a list of all available images):
+Now add a `.gitlab-ci.yml` in the root of your repo, based on the templates in
+this repository:
 
 ```yaml
 variables:
-  JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
-
-.test_template: &test_definition
-  script:
-    - julia -e 'using InteractiveUtils;
-                versioninfo()'
-    # actual testing
-    - julia -e "using Pkg;
-                Pkg.instantiate();
-                Pkg.build();
-                Pkg.test(; coverage=true);"
-    # coverage (needs CODECOV_TOKEN secret variable)
-    - julia -e 'using Pkg; Pkg.add("Coverage")'
-    - julia -e 'using Coverage;
-                cl, tl = get_summary(process_folder());
-                println("(", cl/tl*100, "%) covered");
-                Codecov.submit_local(process_folder(), ".")'
-  coverage: '/\(\d+.\d+\%\) covered/'
-
-test:1.0:
-  image: juliagpu/julia:v1.0
-  <<: *test_definition
-
-test:dev:
-  image: juliagpu/julia:dev
-  <<: *test_definition
-```
-
-For testing 0.6, you'd need to use the old package manager:
-
-```yaml
-variables:
-  JULIA_PKGDIR: "$CI_PROJECT_DIR/.julia/"
-  package: 'PackageName'
-
-.test_template: &test_definition
-  script:
-    - julia -e 'versioninfo()'
-    # actual testing
-    - julia -e "Pkg.init();
-                symlink(\"$CI_PROJECT_DIR\", joinpath(Pkg.dir(), \"$package\"));
-                Pkg.resolve();
-                Pkg.build(\"$package\");
-                Pkg.test(\"$package\"; coverage=true)"
-    # coverage (needs CODECOV_TOKEN secret variable)
-    - julia -e 'using Pkg; Pkg.add("Coverage")'
-    - julia -e 'using Coverage;
-                cl, tl = get_summary(process_folder());
-                println("(", cl/tl*100, "%) covered");
-                Codecov.submit_local(process_folder(), ".")'
-  coverage: '/\(\d+.\d+\%\) covered/'
-
-test:0.6:
-  image: juliagpu/julia:v0.6
-  <<: *test_definition
-```
-
-If you want more control over individual steps, you can divide the process in
-stages and pass files between them. This has the advantage that you can download
-each job's artifacts for local inspection.
-
-```yaml
-before_script:
-  - julia -e 'using InteractiveUtils;
-              versioninfo()'
-
-variables:
-  JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
+  CI_IMAGE_TAG: '-cuda'
 
 stages:
   - test
   - postprocess
 
-
-## testing
-
-.test_template: &pkg3_test_template
-  script:
-    - mkdir $JULIA_DEPOT_PATH # Pkg3.jl#325
-    - julia -e "using Pkg;
-                Pkg.instantiate();
-                Pkg.build();
-                Pkg.test(; coverage=true);"
-  artifacts:
-    paths:
-      - Manifest.toml
-      - .julia/
-      - deps/ext.jl
-      - src/*.cov
-      - src/*/*.cov # gitlab-runner#2620
+include:
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/common.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_v0.7.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_v1.0.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/test_dev.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/postprocess_coverage.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/postprocess_documentation.yml'
 
 test:dev:
-  stage: test
-  image: juliagpu/julia:dev
-  <<: *pkg3_test_template
-
-
-## post-processing
-
-coverage: # needs CODECOV_TOKEN secret variable if you want to deploy
-  stage: postprocess
-  image: juliagpu/julia:dev
-  dependencies:
-    - test:dev
-  script:
-    - julia -e 'using Pkg;
-                Pkg.add("Coverage")'
-    - julia -e 'using Coverage;
-                cl, tl = get_summary(process_folder());
-                println("(", cl/tl*100, "%) covered");
-                Codecov.submit_local(process_folder(), ".")'
-  coverage: '/\(\d+.\d+\%\) covered/'
-
-documentation: # needs DOCUMENTER_KEY secret variable if you want to deploy
-  stage: postprocess
-  image: juliagpu/julia:dev
-  dependencies:
-    - test:dev
-  script:
-    - julia -e 'using Pkg;
-                Pkg.add("Documenter")'
-    - julia docs/make.jl
+  allow_failure: true
 ```
 
-For more inspiration, look at the test rules for existing projects (eg.
-CUDAnative.jl, LLVM.jl, GPUArrays.jl, ...).
+These templates are pretty coarse, and might not be compatible with your
+package. In that case, just copy the contents in your `.gitlab.yml` and
+customize the build where necessary.
 
 
 ## Group runners
@@ -186,9 +84,13 @@ The following images are available:
 * `juliagpu/julia:v1.0-opengl`
 * `juliagpu/julia:dev-opengl`
 
-These images need to be build on the system where the GitLab runner is deployed
-(see `images/build.sh`), configured with the `pull_policy = "if-not-present"`.
-Furthermore, the runner should use the NVIDIA docker runtime, via `runtime =
+When using the templates from this repository, you only need to specify the
+trailing tag (eg. `-cuda`) using the CI_IMAGE_TAG variable.
+
+Note that we don't push these images to a Docker registry, but build them on the
+the system where the GitLab runner is deployed (see `images/build.sh`),
+configured with the `pull_policy = "if-not-present"`. IF you want to use these
+images, make sure the runner uses the NVIDIA docker runtime, via `runtime =
 "nvidia"`. For the OpenGL images, there should be an X server running on display
 `:0` (hard-coded in the Dockerfile, as the `environment` flag in the runner
 config doesn't seem to work), and the runner should mount `/tmp/.X11-unix` in
