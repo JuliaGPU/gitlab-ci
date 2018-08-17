@@ -37,7 +37,7 @@ this repository:
 
 ```yaml
 variables:
-  CI_IMAGE_TAG: '-cuda'
+  CI_IMAGE_TAG: 'cuda'
 
 stages:
   - test
