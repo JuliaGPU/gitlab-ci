@@ -5,10 +5,10 @@ infrastructure for the JuliaGPU organization. It can be used to add GPU CI
 to Julia packages, as long as there's a publicly-accessible git repository.
 
 
-## Quick start
+## Usage
 
-You need to be the owner if your repository, or Gitlab will fail to add a
-webhook.
+First of all, you need to be the owner of your repository or Gitlab will fail
+to add a webhook.
 
 Your project also needs to be part of the GitLab JuliaGPU group:
 
@@ -57,7 +57,7 @@ test:dev:
 ```
 
 These templates are pretty coarse, and might not be compatible with your
-package. In that case, just copy the contents in your `.gitlab.yml` and
+package. In that case, just copy the contents in your `.gitlab-ci.yml` and
 customize the build where necessary.
 
 
@@ -112,7 +112,8 @@ status = [
 
 The following runners are shared with the JuliaGPU group:
 
-* `hydor.elis.ugent.be`: Pascal GTX 1080, CUDA 9.1, 64-bit Linux
+* `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, CUDA 9.0, 64-bit Linux
+
 
 
 ## Docker images
