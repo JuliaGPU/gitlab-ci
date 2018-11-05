@@ -61,6 +61,53 @@ package. In that case, just copy the contents in your `.gitlab.yml` and
 customize the build where necessary.
 
 
+### Pull requests from forks
+
+If you only ever want to build changes from branches on your repo, no further
+set-up is required. However, if you want CI for e.g. pull-requests from forks,
+you need to work around a [GitLab
+limitation](https://gitlab.com/gitlab-org/gitlab-ee/issues/5667). One
+possibility is to mirror those external changes onto your repository. This can
+be automated with Bors, a merge bot for GitHub pull requests. Follow the
+instructions on their [home page](https://bors.tech/), and update your
+`gitlab-ci.yml` to only build the `trying` and `staging` branches for any job
+you've enabled (global filters [are not supported
+yet](https://gitlab.com/gitlab-org/gitlab-ce/issues/49167)). For example:
+
+```yaml
+test:v1.0:
+  only:
+    - staging
+    - trying
+
+test:dev:
+  allow_failure: true
+  only:
+    - staging
+    - trying
+
+documentation:
+  only:
+    - staging
+    - trying
+
+coverage:
+  only:
+    - staging
+    - trying
+```
+
+Finally, use the following `bors.toml` configuration file to require successful
+builds on the `staging` branch:
+
+```toml
+status = [
+  "ci/gitlab/staging"
+]
+```
+
+
+
 ## Group runners
 
 The following runners are shared with the JuliaGPU group:
