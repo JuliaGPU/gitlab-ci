@@ -3,7 +3,7 @@ ARG base
 FROM juliagpu/julia:${base} as base
 
 
-FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 
 COPY --from=base /opt/julia /opt/julia
 
