@@ -102,7 +102,7 @@ builds on the `staging` branch:
 
 ```toml
 status = [
-  "ci/gitlab/staging"
+  "ci/gitlab/%"
 ]
 ```
 
