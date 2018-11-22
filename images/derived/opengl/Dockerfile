@@ -3,7 +3,8 @@ ARG base
 FROM juliagpu/julia:${base} as base
 
 
-FROM nvidia/opengl:1.0-glvnd-devel-ubuntu16.04
+# https://hub.docker.com/r/nvidia/opengl/
+FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
 
 COPY --from=base /opt/julia /opt/julia
 

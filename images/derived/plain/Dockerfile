@@ -3,7 +3,7 @@ ARG base
 FROM juliagpu/julia:${base} as base
 
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 COPY --from=base /opt/julia /opt/julia
 

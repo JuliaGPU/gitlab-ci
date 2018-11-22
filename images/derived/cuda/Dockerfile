@@ -3,7 +3,8 @@ ARG base
 FROM juliagpu/julia:${base} as base
 
 
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
+# https://hub.docker.com/r/nvidia/cuda/
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
 COPY --from=base /opt/julia /opt/julia
 
