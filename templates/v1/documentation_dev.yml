@@ -1,0 +1,9 @@
+documentation:
+  stage: postprocess
+  image: "juliagpu/julia:dev-${CI_IMAGE_TAG}"
+  dependencies:
+    - test:dev
+  script:
+    - julia --project -e 'using Pkg;
+                          Pkg.add("Documenter")'
+    - julia --project docs/make.jl
