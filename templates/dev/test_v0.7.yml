@@ -1,0 +1,22 @@
+test:v0.7:
+  stage: test
+  image: "juliagpu/julia:v0.7-${CI_IMAGE_TAG}"
+  script:
+    - julia -e 'using InteractiveUtils;
+                versioninfo()'
+    - mkdir $JULIA_DEPOT_PATH # Pkg3.jl#325
+    - julia --project -e 'using Pkg;
+                          Pkg.instantiate();
+                          Pkg.build();
+                          Pkg.test(; coverage=true);'
+  artifacts:
+    when: always
+    paths:
+      - Manifest.toml
+      - .julia/
+      - deps/ext.jl
+      - deps/build.log
+      # gitlab-runner#2620
+      - src/*.cov
+      - src/*/*.cov
+      - src/*/*/*.cov
