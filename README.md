@@ -45,12 +45,12 @@ stages:
   - postprocess
 
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/common.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_v0.7.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_v1.0.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/test_dev.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/postprocess_coverage.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v0/postprocess_documentation.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/common.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_v0.7.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_v1.0.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_dev.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/coverage_v1.0.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/documentation_v1.0.yml'
 
 test:dev:
   allow_failure: true
@@ -129,10 +129,10 @@ versions:
 When using the templates from this repository, you only need to select one of
 the following tags using the `CI_IMAGE_TAG` variable:
 
-* `plain`: `ubuntu:16.04` image
-* `cuda`: `nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04`
-* `opencl`: `nvidia/opencl:devel-ubuntu16.04` image
-* `opengl`: `nvidia/opengl:1.0-glvnd-devel-ubuntu16.04` image
+* `plain`: `ubuntu:18.04` image
+* `cuda`: `nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04`
+* `opencl`: `nvidia/opencl:devel-ubuntu18.04` image
+* `opengl`: `nvidia/opengl:1.0-glvnd-devel-ubuntu18.04` image
 
 All images come with essential compiler utilities, but few other packages. If
 you are missing a package, either install it as part of the build process, or
