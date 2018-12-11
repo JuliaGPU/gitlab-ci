@@ -1,5 +1,5 @@
 coverage:
-  stage: postprocess
+  stage: deploy
   image: "juliagpu/julia:dev-${CI_IMAGE_TAG}"
   dependencies:
     - test:dev
