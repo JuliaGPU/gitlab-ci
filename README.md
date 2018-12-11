@@ -40,10 +40,6 @@ this repository:
 variables:
   CI_IMAGE_TAG: 'cuda'
 
-stages:
-  - test
-  - postprocess
-
 include:
   - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/common.yml'
   - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_v0.7.yml'
