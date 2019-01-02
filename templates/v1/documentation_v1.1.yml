@@ -1,0 +1,16 @@
+pages:
+  stage: deploy
+  image: "juliagpu/julia:v1.1-${CI_IMAGE_TAG}"
+  variables:
+    DOCUMENTER_DEBUG: "true"
+  dependencies:
+    - test:v1.1
+  script:
+    - julia --project=docs/ -e 'using Pkg;
+                                Pkg.develop(PackageSpec(path=pwd()));
+                                Pkg.instantiate()'
+    - julia --project=docs/ docs/make.jl
+    - mv docs/build public
+  artifacts:
+    paths:
+    - public
