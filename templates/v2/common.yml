@@ -1,0 +1,8 @@
+stages:
+  - build
+  - test
+  - post
+  - deploy
+
+variables:
+  JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
