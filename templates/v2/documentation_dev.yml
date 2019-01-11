@@ -1,6 +1,6 @@
 documentation:
   stage: post
-  image: "juliagpu/julia:v1.0-${CI_IMAGE_TAG}"
+  image: "juliagpu/julia:dev-${CI_IMAGE_TAG}"
   variables:
     DOCUMENTER_DEBUG: "true"
   dependencies:
