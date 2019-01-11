@@ -1,4 +1,4 @@
-pages:
+documentation:
   stage: post
   image: "juliagpu/julia:v1.1-${CI_IMAGE_TAG}"
   variables:
