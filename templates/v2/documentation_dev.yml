@@ -1,5 +1,6 @@
 documentation:
   stage: post
+  extends: .root
   image: "juliagpu/julia:dev-${CI_IMAGE_TAG}"
   variables:
     DOCUMENTER_DEBUG: "true"
