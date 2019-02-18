@@ -6,3 +6,9 @@ stages:
 
 variables:
   JULIA_DEPOT_PATH: "$CI_PROJECT_DIR/.julia/"
+
+# Root job that other jobs extend
+.root:
+  only:
+    variables:
+      - $CI_IMAGE_TAG

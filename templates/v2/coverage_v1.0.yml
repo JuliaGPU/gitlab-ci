@@ -1,5 +1,6 @@
 coverage:
   stage: post
+  extends: .root
   image: "juliagpu/julia:v1.0-${CI_IMAGE_TAG}"
   dependencies:
     - test:v1.0

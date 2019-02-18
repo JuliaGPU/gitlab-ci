@@ -1,5 +1,6 @@
 test:v1.0:
   stage: test
+  extends: .root
   image: "juliagpu/julia:v1.0-${CI_IMAGE_TAG}"
   script:
     - julia -e 'using InteractiveUtils;
