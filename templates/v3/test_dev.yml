@@ -1,0 +1,4 @@
+test:dev:
+  extends: .test
+  variables:
+    CI_VERSION_TAG: 'dev'

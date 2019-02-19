@@ -1,0 +1,6 @@
+documentation:v1.0:
+  extends: .documentation
+  variables:
+    CI_VERSION_TAG: 'v1.0'
+  dependencies:
+    - test:v1.0
