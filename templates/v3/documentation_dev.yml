@@ -1,4 +1,4 @@
-documentation:dev:
+documentation:
   extends: .documentation
   variables:
     CI_VERSION_TAG: 'dev'
