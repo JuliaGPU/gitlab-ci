@@ -8,6 +8,7 @@ docker_build = if verbose
 else
     `docker build --quiet`
 end
+docker_build = `$docker_build --pull`
 
 # list available images
 const bases = readdir(joinpath(@__DIR__, "base"))
