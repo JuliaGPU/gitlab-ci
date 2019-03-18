@@ -1,32 +1,17 @@
 FROM ubuntu:18.04
 
 
-## checkout
-
-WORKDIR /opt
+## installation
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
                     # basic stuff
-                    build-essential ca-certificates \
-                    # Julia build deps
-                    cmake curl gfortran git m4 python patchelf && \
+                    curl ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git clone https://github.com/JuliaLang/julia.git
-
-
-## build
-
-WORKDIR /opt/julia
-
-RUN make all -j$(nproc) \
-        MARCH=x86-64 \
-        JULIA_CPU_TARGET=x86-64 && \
-    rm -rf deps/scratch deps/srccache usr-staging
-
-RUN contrib/fixup-libgfortran.sh usr/lib
+RUN mkdir -p /opt/julia/usr && \
+    curl -s -L https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz | tar -C /opt/julia/usr -x -z --strip-components=1 -f -
 
 
 ## execution
