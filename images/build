@@ -2,14 +2,6 @@
 
 const tag = "juliagpu/julia"
 
-const verbose = haskey(ENV, "VERBOSE")
-docker_build = if verbose
-    `docker build`
-else
-    `docker build --quiet`
-end
-docker_build = `$docker_build --pull`
-
 # list available images
 const bases = readdir(joinpath(@__DIR__, "base"))
 const derivatives = readdir(joinpath(@__DIR__, "derived"))
@@ -27,8 +19,8 @@ for base in bases
     base_tag = "$tag:$base"
 
     if base in builds
-        verbose && @info("Rebuilding base image $base")
-        run(`$docker_build --no-cache $base_path --tag $base_tag`)
+        run(`docker build --pull --no-cache $base_path --tag $base_tag`)
+        run(`docker push $base_tag`)
     end
 
     for derived in derivatives
@@ -36,8 +28,8 @@ for base in bases
         derived_tag = "$tag:$base-$derived"
 
         if base in builds || derived in builds
-            verbose && @info("Rebuilding derived image $base-$derived")
-            run(`$docker_build --build-arg base=$base $derived_path --tag $derived_tag`)
+            run(`docker build --pull --build-arg base=$base $derived_path --tag $derived_tag`)
+            run(`docker push $derived_tag`)
         end
     end
 end
