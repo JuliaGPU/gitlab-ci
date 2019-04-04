@@ -1,0 +1,6 @@
+coverage:
+  extends: .coverage
+  variables:
+    CI_VERSION_TAG: 'dev'
+  dependencies:
+    - test:dev

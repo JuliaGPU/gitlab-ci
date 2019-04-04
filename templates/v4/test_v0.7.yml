@@ -1,0 +1,4 @@
+test:v0.7:
+  extends: .test
+  variables:
+    CI_VERSION_TAG: 'v0.7'

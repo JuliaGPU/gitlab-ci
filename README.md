@@ -142,3 +142,14 @@ images, make sure the runner uses the NVIDIA docker runtime, via `runtime =
 `:0` (hard-coded in the Dockerfile, as the `environment` flag in the runner
 config doesn't seem to work), and the runner should mount `/tmp/.X11-unix` in
 the container (i.e., `volumes = [/tmp/.X11-unix:/tmp/.X11-unix:ro"]`).
+
+
+
+# Hacking
+
+When doing development to the templates in this repository, do know that the
+template files as included by GitLab CI/CD configurations are cached. To prevent
+this, and make sure your changes are picked up, be sure to 1) clear the runner
+cache on the pipeline overview page of the repository that includes the
+templates, and 2) the top commit on the target repository changes (an empty
+`commit --amend` suffices),
