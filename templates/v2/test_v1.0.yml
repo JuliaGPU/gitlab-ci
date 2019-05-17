@@ -5,7 +5,7 @@ test:v1.0:
   script:
     - julia -e 'using InteractiveUtils;
                 versioninfo()'
-    - mkdir $JULIA_DEPOT_PATH # Pkg3.jl#325
+    - mkdir $JULIA_DEPOT_PATH # Pkg.jl#325
     - julia --project -e 'using Pkg;
                           Pkg.instantiate();
                           Pkg.build();
