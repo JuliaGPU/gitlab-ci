@@ -19,3 +19,6 @@ RUN apt-get update && \
 
 RUN ln -s /opt/julia/usr/bin/julia       /usr/bin/julia && \
     ln -s /opt/julia/usr/bin/julia-debug /usr/bin/julia-debug
+
+
+ADD extras/ /
