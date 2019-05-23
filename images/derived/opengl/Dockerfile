@@ -22,6 +22,6 @@ RUN ln -s /opt/julia/usr/bin/julia       /usr/bin/julia && \
 
 
 ADD extras/ /
-
+RUN ldconfig
 
 ENV DISPLAY=:0
