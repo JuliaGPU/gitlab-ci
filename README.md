@@ -110,7 +110,9 @@ The following runners are shared with the JuliaGPU group:
 
 * `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, CUDA 9.0, 64-bit Linux
 
-
+Note that you need to disable shared runners on your repository in Gitlab 
+(in `Settings/CI / CD`) - otherwise, you may run on a Gitlab shared runner,
+instead off a JuliaGPU one.  Gitlab shared runners usually do not have GPUs.
 
 ## Docker images
 
