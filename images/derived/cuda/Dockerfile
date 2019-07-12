@@ -4,7 +4,7 @@ FROM juliagpu/julia:${base} as base
 
 
 # https://hub.docker.com/r/nvidia/cuda/
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
 
 COPY --from=base /opt/julia /opt/julia
 
