@@ -13,7 +13,10 @@ RUN apt-get update && \
                     # tools
                     ca-certificates curl git \
                     # common package dependencies
-                    build-essential gfortran && \
+                    build-essential gfortran \
+                    # ROCm external libraries
+                    rocblas rocsparse rocfft rocrand rocalution \
+                    miopen-hip miopen-opencl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
