@@ -15,8 +15,8 @@ RUN apt-get update && \
                     # common package dependencies
                     build-essential gfortran \
                     # ROCm external libraries
-                    rocblas rocsparse rocfft rocrand rocalution \
-                    miopen-hip miopen-opencl && \
+                    rocblas rocsparse rocfft rocrand rocalution && \
+                    #miopen-hip miopen-opencl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
