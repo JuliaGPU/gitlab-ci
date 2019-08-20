@@ -11,7 +11,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/julia/usr && \
-    curl -s -L https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.0-alpha-linux-x86_64.tar.gz | tar -C /opt/julia/usr -x -z --strip-components=1 -f -
+    curl -s -L https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.0-rc1-linux-x86_64.tar.gz | tar -C /opt/julia/usr -x -z --strip-components=1 -f -
 
 
 ## execution
