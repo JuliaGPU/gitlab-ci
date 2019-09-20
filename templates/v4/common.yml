@@ -51,6 +51,7 @@ variables:
                 println("(", cl/tl*100, "%) covered");
                 Codecov.submit_local(process_folder(), ".")'
   coverage: '/\(\d+.\d+\%\) covered/'
+  when: always
 
 .documentation:
   stage: post
@@ -66,3 +67,4 @@ variables:
   artifacts:
     paths:
     - docs/build
+  when: always
