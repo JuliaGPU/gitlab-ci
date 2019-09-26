@@ -33,28 +33,44 @@ On the settings page of your new repo:
 * Ci/CD -> secret variables: provide a `CODECOV_TOKEN` (optional)
 
 
-Now add a `.gitlab-ci.yml` in the root of your repo, based on the templates in
-this repository:
+Now add a `.gitlab-ci.yml` at the root of your repo:
 
 ```yaml
 variables:
   CI_IMAGE_TAG: 'cuda'
 
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/common.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_v0.7.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_v1.0.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/test_dev.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/coverage_v1.0.yml'
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v1/documentation_v1.0.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v5/test.yml'
+
+test:v1.0:
+  extends: .test:v1.0
 
 test:dev:
+  extends: .test:dev
   allow_failure: true
 ```
 
-These templates are pretty coarse, and might not be compatible with your
-package. In that case, just copy the contents in your `.gitlab-ci.yml` and
-customize the build where necessary.
+The `CI_IMAGE_TAG` variable determines which Docker image will be used (see
+below). You should always include the `test.yml` file and define some `test`
+targets that extend from the `.test` recipes.
+
+This repository also provides some files to include that define concrete jobs:
+
+- `coverage.yml`: install Coverage.jl and submit coverage information to Codecov
+- `documentation.yml`: build documentation from the `docs/` subproject. This job
+  does not submit, as Documenter.jl does not support Gitlab. Instead, you can
+  use a deploy phase with Gitlab pages to host the documentation:
+  ```
+  pages:
+  stage: deploy
+  script:
+    - mv docs/build public
+  artifacts:
+    paths:
+    - public
+  only:
+    - master
+  ```
 
 
 ### Pull requests from forks
@@ -65,9 +81,9 @@ you need to work around a [GitLab
 limitation](https://gitlab.com/gitlab-org/gitlab-ee/issues/5667). One
 possibility is to mirror those external changes onto your repository. This can
 be automated with Bors, a merge bot for GitHub pull requests. Follow the
-instructions on their [home page](https://bors.tech/), and update your
-`gitlab-ci.yml` to only build the `trying` and `staging` branches for any job
-you've enabled (global filters [are not supported
+instructions on their [home page](https://bors.tech/), and if you want to use
+Bors exclusively update your `gitlab-ci.yml` to only build the `trying` and
+`staging` branches for any job you've enabled (global filters [are not supported
 yet](https://gitlab.com/gitlab-org/gitlab-ce/issues/49167)). For example:
 
 ```yaml
@@ -110,40 +126,32 @@ The following runners are shared with the JuliaGPU group:
 
 * `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, CUDA 9.0, 64-bit Linux
 
-Note that you need to disable shared runners on your repository in Gitlab 
+Note that you need to disable shared runners on your repository in Gitlab
 (in `Settings/CI / CD`) - otherwise, you may run on a Gitlab shared runner,
 instead off a JuliaGPU one.  Gitlab shared runners usually do not have GPUs.
 
 ## Docker images
 
-Images are named according to `juliagpu/julia:$VERSION-$TAG`, with the following
-versions:
+Images are named according to `juliagpu/julia:$VERSION-$TAG`, and use the
+precompiled binaries from the Julia home page. When using the templates from
+this repository, you also need to select one of the following tags using the
+`CI_IMAGE_TAG` variable:
 
-* `v0.6`: daily build from the `release-0.6` branch
-* `v0.7`: downloaded from the Julia homepage
-* `v1.0`: downloaded from the Julia homepage
-* `dev`: daily build from the `master` branch
-
-When using the templates from this repository, you only need to select one of
-the following tags using the `CI_IMAGE_TAG` variable:
-
-* `plain`: `ubuntu:18.04` image
-* `cuda`: `nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04`
-* `opencl`: `nvidia/opencl:devel-ubuntu18.04` image
-* `opengl`: `nvidia/opengl:1.0-glvnd-devel-ubuntu18.04` image
+* `plain`: `ubuntu` image
+* `cuda`: `nvidia/cuda` image with CUDNN
+* `opencl`: `nvidia/opencl` image
+* `opengl`: `nvidia/opengl` image
 
 All images come with essential compiler utilities, but few other packages. If
 you are missing a package, either install it as part of the build process, or
 file an issue here.
 
-Note that we don't push these images to a Docker registry, but build them on the
-the system where the GitLab runner is deployed (see `images/build.sh`),
-configured with the `pull_policy = "if-not-present"`. IF you want to use these
-images, make sure the runner uses the NVIDIA docker runtime, via `runtime =
-"nvidia"`. For the OpenGL images, there should be an X server running on display
-`:0` (hard-coded in the Dockerfile, as the `environment` flag in the runner
-config doesn't seem to work), and the runner should mount `/tmp/.X11-unix` in
-the container (i.e., `volumes = [/tmp/.X11-unix:/tmp/.X11-unix:ro"]`).
+If you want to use these images, make sure the runner uses the NVIDIA docker
+runtime, via `runtime = "nvidia"`. For the OpenGL images, there should be an X
+server running on display `:0` (hard-coded in the Dockerfile, as the
+`environment` flag in the runner config doesn't seem to work), and the runner
+should mount `/tmp/.X11-unix` in the container (i.e., `volumes =
+[/tmp/.X11-unix:/tmp/.X11-unix:ro"]`).
 
 
 
