@@ -81,3 +81,21 @@ variables:
   extends: .test
   variables:
     CI_VERSION_TAG: 'dev'
+
+.test:source:
+  extends: .test
+  variables:
+    CI_VERSION_TAG: 'dev'
+    # FIXME: we don't use the Julia version in the Docker image.
+    #        either we should have a 'no julia' version,
+    #        or just download Julia from Gitlab.
+  before_script:
+    - rm -rf /opt/julia
+    - apt update
+    - apt install -y git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config
+    - git clone https://github.com/JuliaLang/julia
+    - make -C julia -j$(nproc) install JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
+    - ln -sf $(pwd)/julia/julia /usr/bin/julia
+    - julia -e 'using InteractiveUtils;
+                versioninfo()'
+    - mkdir $JULIA_DEPOT_PATH # Pkg.jl#325

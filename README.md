@@ -52,7 +52,9 @@ test:dev:
 
 The `CI_IMAGE_TAG` variable determines which Docker image will be used (see
 below). You should always include the `test.yml` file and define some `test`
-targets that extend from the `.test` recipes.
+targets that extend from the `.test` recipes. Multiple of these recipes are
+provided: one for each supported version of Julia, a `:dev` version for the
+latest nightly, and `:source` if you need Julia built from source.
 
 This repository also provides some files to include that define concrete jobs:
 
