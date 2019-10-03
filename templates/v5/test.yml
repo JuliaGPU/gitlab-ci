@@ -42,7 +42,6 @@ variables:
     when: always
     paths:
       - Manifest.toml
-      - .julia/
       - deps/ext.jl
       - deps/build.log
       # gitlab-runner#2620
