@@ -112,6 +112,8 @@ cache:
 # documentation
 #
 
+# NOTE: not using the Manifest (develop instead of instantiate) due to Pkg.jl#1423
+
 .documentation:
   stage: post
   variables:
