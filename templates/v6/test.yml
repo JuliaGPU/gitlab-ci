@@ -17,7 +17,7 @@ cache:
 
 
 #
-# download rules
+# Julia versions
 #
 
 .julia:v0.7:
@@ -98,35 +98,35 @@ cache:
 
 .test:v0.7:
   extends:
-    - .test
     - .julia:v0.7
+    - .test
 
 .test:v1.0:
   extends:
-    - .test
     - .julia:v1.0
+    - .test
 
 .test:v1.1:
   extends:
-    - .test
     - .julia:v1.1
+    - .test
 
 .test:v1.2:
   extends:
-    - .test
     - .julia:v1.2
+    - .test
 
 .test:v1.3:
   extends:
-    - .test
     - .julia:v1.3
+    - .test
 
 .test:dev:
   extends:
-    - .test
     - .julia:dev
+    - .test
 
 .test:source:
   extends:
-    - .test
     - .julia:source
+    - .test
