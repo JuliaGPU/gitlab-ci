@@ -38,7 +38,7 @@ Now add a `.gitlab-ci.yml` at the root of your repo:
 
 ```yaml
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6/test.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6.yml'
 
 test:1.0:
   extends:
