@@ -63,7 +63,7 @@ test:1.0:
   extends:
     - .julia:1.0
     - .test
-  image: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+  image: nvidia/cuda:latest
 ```
 
 The repository also defines recipes for other common operations:
