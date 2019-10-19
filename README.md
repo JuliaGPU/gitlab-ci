@@ -5,6 +5,7 @@ infrastructure for the JuliaGPU organization. It can be used to add GPU CI
 to Julia packages, as long as there's a publicly-accessible git repository.
 
 
+
 ## Usage
 
 First of all, you need to be the owner of your repository or Gitlab will fail
@@ -36,30 +37,39 @@ On the settings page of your new repo:
 Now add a `.gitlab-ci.yml` at the root of your repo:
 
 ```yaml
-variables:
-  CI_IMAGE_TAG: 'cuda'
-
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v5/test.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6/test.yml'
 
-test:v1.0:
-  extends: .test:v1.0
+test:1.0:
+  extends:
+    - .julia:1.0
+    - .test
 
-test:dev:
-  extends: .test:dev
+test:nightly:
+  extends:
+    - .julia:nightly
+    - .test
   allow_failure: true
 ```
 
-The `CI_IMAGE_TAG` variable determines which Docker image will be used (see
-below). You should always include the `test.yml` file and define some `test`
-targets that extend from the `.test` recipes. Multiple of these recipes are
-provided: one for each supported version of Julia, a `:dev` version for the
-latest nightly, and `:source` if you need Julia built from source.
+Each job extends two existing recipes: a `.julia` recipe that downloads Julia,
+and a `.test` target that defines the basic testing harness. These jobs will run
+on the default image as registered by the CI runner, typically an image without
+GPU support. To actually run make use of the GPU, specify an appropriate image
+as follows:
 
-This repository also provides some files to include that define concrete jobs:
+```yaml
+test:1.0:
+  extends:
+    - .julia:1.0
+    - .test
+  image: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+```
 
-- `coverage.yml`: install Coverage.jl and submit coverage information to Codecov
-- `documentation.yml`: build documentation from the `docs/` subproject. This job
+The repository also defines recipes for other common operations:
+
+- `.coverage`: install Coverage.jl and submit coverage information to Codecov
+- `.documentation`: build documentation from the `docs/` subproject. This job
   does not submit, as Documenter.jl does not support Gitlab. Instead, you can
   use a deploy phase with Gitlab pages to host the documentation:
   ```
@@ -89,23 +99,10 @@ Bors exclusively update your `gitlab-ci.yml` to only build the `trying` and
 yet](https://gitlab.com/gitlab-org/gitlab-ce/issues/49167)). For example:
 
 ```yaml
-test:v1.0:
-  only:
-    - staging
-    - trying
-
-test:dev:
-  allow_failure: true
-  only:
-    - staging
-    - trying
-
-documentation:
-  only:
-    - staging
-    - trying
-
-coverage:
+test:1.0:
+  extends:
+    - .julia:1.0
+    - .test
   only:
     - staging
     - trying
@@ -126,42 +123,17 @@ status = [
 
 The following runners are shared with the JuliaGPU group:
 
-* `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, CUDA 9.0, 64-bit Linux
+* `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, 64-bit Linux
 
 Note that you need to disable shared runners on your repository in Gitlab
 (in `Settings/CI / CD`) - otherwise, you may run on a Gitlab shared runner,
 instead off a JuliaGPU one.  Gitlab shared runners usually do not have GPUs.
 
-## Docker images
-
-Images are named according to `juliagpu/julia:$VERSION-$TAG`, and use the
-precompiled binaries from the Julia home page. When using the templates from
-this repository, you also need to select one of the following tags using the
-`CI_IMAGE_TAG` variable:
-
-* `plain`: `ubuntu` image
-* `cuda`: `nvidia/cuda` image with CUDNN
-* `opencl`: `nvidia/opencl` image
-* `opengl`: `nvidia/opengl` image
-
-All images come with essential compiler utilities, but few other packages. If
-you are missing a package, either install it as part of the build process, or
-file an issue here.
-
-If you want to use these images, make sure the runner uses the NVIDIA docker
-runtime, via `runtime = "nvidia"`. For the OpenGL images, there should be an X
-server running on display `:0` (hard-coded in the Dockerfile, as the
-`environment` flag in the runner config doesn't seem to work), and the runner
-should mount `/tmp/.X11-unix` in the container (i.e., `volumes =
-[/tmp/.X11-unix:/tmp/.X11-unix:ro"]`).
 
 
-
-# Hacking
+## Hacking
 
 When doing development to the templates in this repository, do know that the
-template files as included by GitLab CI/CD configurations are cached. To prevent
-this, and make sure your changes are picked up, be sure to 1) clear the runner
-cache on the pipeline overview page of the repository that includes the
-templates, and 2) the top commit on the target repository changes (an empty
-`commit --amend` suffices),
+template files as included by GitLab CI/CD configurations are cached. To
+effectively iterate on the template files, be sure to include the commit hash in
+the path to the template files.
