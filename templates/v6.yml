@@ -101,13 +101,13 @@ variables:
   script:
     - julia -e 'using InteractiveUtils;
                 versioninfo()'
-    - julia --project -e 'using Pkg;
-                          Pkg.instantiate();
-                          Pkg.add("Coverage")'
-    - julia --project -e 'using Coverage;
-                          cl, tl = get_summary(process_folder());
-                          println("(", cl/tl*100, "%) covered");
-                          Codecov.submit_local(process_folder(), ".")'
+    - julia -e 'using Pkg;
+                Pkg.instantiate();
+                Pkg.add("Coverage")'
+    - julia -e 'using Coverage;
+                cl, tl = get_summary(process_folder());
+                println("(", cl/tl*100, "%) covered");
+                Codecov.submit_local(process_folder(), ".")'
   coverage: '/\(\d+.\d+\%\) covered/'
 
 
@@ -115,17 +115,21 @@ variables:
 # documentation
 #
 
-# NOTE: not using the Manifest (develop instead of instantiate) due to Pkg.jl#1423
+# NOTE: the recommended set-up is to develop the main package from the docs environment,
+#       but that ignores the package's Manifest. instead, we instantiate and activate both
+#       by setting the load path, giving priority to the main package Manifest.
 
 .documentation:
   stage: post
   variables:
     DOCUMENTER_DEBUG: "true"
+    JULIA_LOAD_PATH: ".:docs::"
   script:
     - julia -e 'using InteractiveUtils;
                 versioninfo()'
+    - julia --project -e 'using Pkg;
+                          Pkg.instantiate()'
     - julia --project=docs/ -e 'using Pkg;
-                                Pkg.develop(PackageSpec(path=pwd()));
                                 Pkg.instantiate()'
     - julia --project=docs/ docs/make.jl
   artifacts:
