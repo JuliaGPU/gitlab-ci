@@ -52,17 +52,18 @@ test:nightly:
   allow_failure: true
 ```
 
-Each job extends two existing recipes: a `.julia` recipe that downloads Julia,
-and a `.test` target that defines the basic testing harness. These jobs will run
-on the default image as registered by the CI runner, typically an image without
-GPU support. To actually run make use of the GPU, specify an appropriate image
-as follows:
+Each job extends two existing recipes: a `.julia` recipe that downloads Julia, and a `.test`
+target that defines the basic testing harness. These jobs will run on the default image as
+registered by the CI runner, typically an image without GPU support. To actually run make
+use of the GPU, specify an appropriate image and request a runner with a GPU as follows:
 
 ```yaml
 test:1.0:
   extends:
     - .julia:1.0
     - .test
+  tags:
+    - nvidia
   image: nvidia/cuda:latest
 ```
 
@@ -123,7 +124,8 @@ status = [
 
 The following runners are shared with the JuliaGPU group:
 
-* `hydor.elis.ugent.be`: Kepler GTX Titan & Pascal GTX 1080, 64-bit Linux
+* `hydor.elis.ugent.be`: Pascal GTX 1080 & Turing RTX 20180 Ti, 64-bit Linux
+* `ripper.elis.ugent.be`: Kepler GTX Titan, 64-bit Linux
 
 Note that you need to disable shared runners on your repository in Gitlab
 (in `Settings/CI / CD`) - otherwise, you may run on a Gitlab shared runner,
