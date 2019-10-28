@@ -123,7 +123,7 @@ variables:
   stage: post
   variables:
     DOCUMENTER_DEBUG: "true"
-    JULIA_LOAD_PATH: ".:docs::"
+    JULIA_LOAD_PATH: "$CI_PROJECT_DIR:$CI_PROJECT_DIR/docs::"
   script:
     - julia -e 'using InteractiveUtils;
                 versioninfo()'
