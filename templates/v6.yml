@@ -11,6 +11,8 @@ cache:
 
 variables:
   DEBIAN_FRONTEND: 'noninteractive'
+  BINARYBUILDER_STORAGE_DIR: 'downloads'
+  BINARYBUILDER_DOWNLOADS_CACHE: 'downloads'
 
 
 #
