@@ -87,6 +87,7 @@ variables:
     when: always
     paths:
       - deps/ext.jl
+      - deps/deps.jl
       - deps/build.log
       # gitlab-runner#2620
       - src/*.cov
