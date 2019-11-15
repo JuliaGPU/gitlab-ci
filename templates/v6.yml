@@ -9,6 +9,7 @@ cache:
   paths:
     - downloads
     - deps/usr/downloads
+    - .julia/packages/**/deps/usr/downloads
 
 
 #
@@ -73,6 +74,7 @@ cache:
 .test:
   stage: test
   script:
+    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia/"
     - julia -e 'using InteractiveUtils;
                 versioninfo()'
     - julia --project -e 'using Pkg;
