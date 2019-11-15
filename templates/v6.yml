@@ -8,6 +8,7 @@ cache:
   key: julia
   paths:
     - downloads
+    - deps/usr/downloads
 
 
 #
