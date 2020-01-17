@@ -160,6 +160,7 @@ cache:
                           Pkg.instantiate();
                           Pkg.build();
                           Pkg.test(; coverage=true);'
+    - shopt -s globstar; for f in src/**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
   artifacts:
     when: always
     paths:
