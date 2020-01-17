@@ -124,6 +124,9 @@ cache:
       if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
         wget -nv -N -P downloads/ https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz
         FILENAME=julia-latest-linux64.tar.gz
+      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
+        wget -nv -N -P downloads/ https://julialangnightlies-s3.julialang.org/bin/linux/aarch64/julia-latest-linuxaarch64.tar.gz
+        FILENAME=julia-latest-linuxaarch64.tar.gz
       else
         echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
       fi
