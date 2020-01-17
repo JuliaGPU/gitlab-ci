@@ -184,10 +184,7 @@ cache:
                 Pkg.instantiate();
                 Pkg.add("Coverage")'
     - julia -e 'using Coverage;
-                cl, tl = get_summary(process_folder());
-                println("(", cl/tl*100, "%) covered");
                 Codecov.submit_local(process_folder(), ".")'
-  coverage: '/\(\d+.\d+\%\) covered/'
 
 
 #
