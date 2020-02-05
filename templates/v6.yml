@@ -10,6 +10,7 @@ cache:
     - downloads
     - deps/usr/downloads
     - .julia/packages/**/deps/usr/downloads
+    - .julia/artifacts
 
 
 #
