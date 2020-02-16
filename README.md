@@ -38,16 +38,27 @@ Now add a `.gitlab-ci.yml` at the root of your repo:
 
 ```yaml
 include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6.yml'
+  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v7.yml'
 
 test:1.0:
+  variables:
+    julia_version: "1.0"
   extends:
-    - .julia:1.0
+    - .julia
+    - .test
+
+test:1.x:
+  variables:
+    julia_version: "1"
+  extends:
+    - .julia
     - .test
 
 test:nightly:
+  variables:
+    julia_version: "nightly"
   extends:
-    - .julia:nightly
+    - .julia
     - .test
   allow_failure: true
 ```
@@ -59,8 +70,10 @@ use of the GPU, specify an appropriate image and request a runner with a GPU as 
 
 ```yaml
 test:1.0:
+  variables:
+    julia_version: "1.0"
   extends:
-    - .julia:1.0
+    - .julia
     - .test
   tags:
     - nvidia
@@ -101,8 +114,10 @@ yet](https://gitlab.com/gitlab-org/gitlab-ce/issues/49167)). For example:
 
 ```yaml
 test:1.0:
+  variables:
+    julia_version: "1.0"
   extends:
-    - .julia:1.0
+    - .julia
     - .test
   only:
     - staging

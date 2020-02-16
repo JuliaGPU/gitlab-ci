@@ -1,0 +1,105 @@
+# modified from https://github.com/JuliaGPU/gitlab-ci/blob/master/templates/v6.yml
+stages:
+  - build
+  - test
+  - post
+  - deploy
+
+cache:
+  key: julia
+  paths:
+    - downloads
+    - deps/usr/downloads
+    - .julia/packages/**/deps/usr/downloads
+    - .julia/artifacts
+
+
+#
+# install
+#
+
+.julia:
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y -qq -o=Dpkg::Use-Pty=0 python3-pip python3-wheel python3-setuptools gnupg wget --no-install-recommends
+    - pip3 install jill
+    - jill install $julia_version --confirm --update --upstream Official
+    - ln -sf /opt/julias/julia-*/bin/julia /usr/local/bin/julia
+    - julia -e 'using InteractiveUtils; versioninfo()'
+    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+
+.julia:source:
+  before_script:
+    - apt-get -qq update
+    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config
+    - git clone https://github.com/JuliaLang/julia
+    - make -C julia -j$(nproc) install JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
+    - ln -s $(pwd)/julia/julia /usr/local/bin/julia
+    - julia -e 'using InteractiveUtils; versioninfo()'
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
+    # https://gitlab.com/gitlab-org/gitlab/issues/16343
+    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+
+
+#
+# test
+#
+
+.test:
+    stage: test
+    script:
+      - julia --project -e 'using Pkg;
+                            Pkg.instantiate();
+                            Pkg.build();
+                            Pkg.test(; coverage=true);'
+    after_script:
+      - shopt -s globstar; for f in src/**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
+    artifacts:
+      when: always
+      paths:
+        - deps/ext.jl
+        - deps/deps.jl
+        - deps/build.log
+        # gitlab-runner#2620
+        - src/*.cov
+        - src/*/*.cov
+        - src/*/*/*.cov
+
+
+  #
+  # coverage
+  #
+
+  .coverage:
+    stage: post
+    script:
+      - julia -e 'using Pkg;
+                  Pkg.instantiate();
+                  Pkg.add("Coverage")'
+      - julia -e 'using Coverage;
+                  Codecov.submit_local(process_folder(), ".")'
+
+
+  #
+  # documentation
+  #
+
+  # NOTE: the recommended set-up is to develop the main package from the docs environment,
+  #       but that ignores the package's Manifest. instead, we instantiate and activate both
+  #       by setting the load path, giving priority to the main package Manifest.
+
+  .documentation:
+    stage: post
+    variables:
+      DOCUMENTER_DEBUG: "true"
+      JULIA_LOAD_PATH: "$CI_PROJECT_DIR:$CI_PROJECT_DIR/docs::"
+    script:
+      - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git
+      - julia --project -e 'using Pkg;
+                            Pkg.instantiate()'
+      - julia --project=docs/ -e 'using Pkg;
+                                  Pkg.instantiate()'
+      - julia --project=docs/ docs/make.jl
+    artifacts:
+      paths:
+      - docs/build
