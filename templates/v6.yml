@@ -9,6 +9,7 @@ cache:
   paths:
     - downloads
     - deps/usr/downloads
+    - julia/deps/srccache
     - .julia/packages/**/deps/usr/downloads
     - .julia/artifacts
 
@@ -140,8 +141,10 @@ cache:
 .julia:source:
   before_script:
     - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config
-    - git clone https://github.com/JuliaLang/julia
+    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config rsync
+    # clone to a different folder because julia/deps/srccache might exist already
+    - git clone https://github.com/JuliaLang/julia julia.git
+    - rsync -a julia.git/ julia/
     - make -C julia -j$(nproc) install JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
     - ln -s $(pwd)/julia/julia /usr/local/bin/julia
     - julia -e 'using InteractiveUtils; versioninfo()'
