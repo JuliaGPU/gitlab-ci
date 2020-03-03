@@ -145,7 +145,8 @@ cache:
     # clone to a different folder because julia/deps/srccache might exist already
     - git clone https://github.com/JuliaLang/julia julia.git
     - rsync -a julia.git/ julia/
-    - make -C julia -j$(nproc) install JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
+    # build
+    - make -C julia -j$(nproc) JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
     - ln -s $(pwd)/julia/julia /usr/local/bin/julia
     - julia -e 'using InteractiveUtils; versioninfo()'
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
