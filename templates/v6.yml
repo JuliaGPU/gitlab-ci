@@ -143,7 +143,7 @@ cache:
     - apt-get -qq update
     - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config rsync
     # clone to a different folder because julia/deps/srccache might exist already
-    - git clone https://github.com/JuliaLang/julia julia.git
+    - git clone $CI_CLONE_ARGS https://github.com/JuliaLang/julia julia.git
     - rsync -a julia.git/ julia/
     # build
     - make -C julia -j$(nproc) JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
