@@ -118,6 +118,26 @@ cache:
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
 
+.julia:1.4:
+  before_script:
+    - apt-get -qq update
+    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
+    - >
+      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
+        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.4/julia-1.4-latest-linux-x86_64.tar.gz
+        FILENAME=julia-1.4-latest-linux-x86_64.tar.gz
+      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
+        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.4/julia-1.4-latest-linux-aarch64.tar.gz
+        FILENAME=julia-1.4-latest-linux-aarch64.tar.gz
+      else
+        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
+      fi
+    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
+    - julia -e 'using InteractiveUtils; versioninfo()'
+    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
+    # https://gitlab.com/gitlab-org/gitlab/issues/16343
+    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+
 .julia:nightly:
   before_script:
     - apt-get -qq update
