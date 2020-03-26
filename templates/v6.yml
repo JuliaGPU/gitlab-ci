@@ -34,6 +34,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/julia.tar.gz
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -54,6 +55,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -74,6 +76,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -94,6 +97,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -114,6 +118,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -134,6 +139,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -154,6 +160,7 @@ cache:
       fi
     - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
@@ -169,6 +176,7 @@ cache:
     - make -C julia -j$(nproc) JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
     - ln -s $(pwd)/julia/julia /usr/local/bin/julia
     - julia -e 'using InteractiveUtils; versioninfo()'
+    - JULIA_LLVM_ARGS='--version' julia
     # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
     # https://gitlab.com/gitlab-org/gitlab/issues/16343
     - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
