@@ -12,6 +12,7 @@ cache:
     - julia/deps/srccache
     - .julia/packages/**/deps/usr/downloads
     - .julia/artifacts
+    - julia/deps/srccache/*.tar.gz
 
 
 #
