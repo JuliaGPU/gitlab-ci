@@ -198,7 +198,7 @@ cache:
                                       Pkg.build();
                                       Pkg.test(; coverage=true);'
   after_script:
-    - shopt -s globstar; for f in src/**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
+    - shopt -s globstar; for f in ./**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
   artifacts:
     when: always
     paths:
@@ -206,9 +206,10 @@ cache:
       - deps/deps.jl
       - deps/build.log
       # gitlab-runner#2620
-      - src/*.cov
-      - src/*/*.cov
-      - src/*/*/*.cov
+      - ./*.cov
+      - ./*/*.cov
+      - ./*/*/*.cov
+      - ./*/*/*/*.cov
 
 
 #
@@ -218,11 +219,15 @@ cache:
 .coverage:
   stage: post
   script:
+    # the depot is inside the project dir, for caching purposes.
+    # remove it and use a fresh depot to ignore other package's coverage.
+    - rm -rf .julia
+    - unset JULIA_DEPOT_PATH
+    #
     - julia --color=yes -e 'using Pkg;
-                            Pkg.instantiate();
                             Pkg.add("Coverage")'
     - julia --color=yes -e 'using Coverage;
-                            Codecov.submit_local(process_folder(), ".")'
+                            Codecov.submit_local(process_folder("."), ".")'
 
 
 #
