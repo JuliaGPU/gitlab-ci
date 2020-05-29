@@ -240,9 +240,10 @@ cache:
 .coverage:
   stage: post
   script:
-    # the depot is inside the project dir, for caching purposes.
-    # remove it and use a fresh depot to ignore other package's coverage.
-    - rm -rf .julia
+    # CoverageTools.jl is fragile and crashes on non-code.
+    # however, the depot is inside the project dir (for caching purposes).
+    # remove it, and the git directory, and use an outside depot.
+    - rm -rf .julia .git
     - unset JULIA_DEPOT_PATH
     #
     - julia --color=yes -e 'using Pkg;
