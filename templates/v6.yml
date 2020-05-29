@@ -240,16 +240,16 @@ cache:
 .coverage:
   stage: post
   script:
-    # CoverageTools.jl is fragile and crashes on non-code.
-    # however, the depot is inside the project dir (for caching purposes).
-    # remove it, and the git directory, and use an outside depot.
-    - rm -rf .julia .git
-    - unset JULIA_DEPOT_PATH
-    #
     - julia --color=yes -e 'using Pkg;
                             Pkg.add("Coverage")'
+    # Coverage(Tools).jl scans all .jl files but easily fails at that,
+    # so make sure we exclude hidden directories (like the depot, .git, ...)
     - julia --color=yes -e 'using Coverage;
-                            Codecov.submit_local(process_folder("."), ".")'
+                            coverage = vcat(map(process_folder,
+                                                filter(entry->isdir(entry) &&
+                                                              !startswith(entry, "."),
+                                                       readdir(".")))...);
+                            Codecov.submit_local(coverage, ".")'
 
 
 #
