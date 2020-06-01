@@ -17,194 +17,95 @@ cache:
     - julia/deps/srccache
     - julia/deps/srccache/*.tar.gz
 
+.install:
+  before_script:
+    - |
+      apt-get -qq update
+      apt-get -qqy install curl
+      case "$CI_RUNNER_EXECUTABLE_ARCH" in
+        "linux/amd64")
+          larch="x64"
+          rarch="x86_64"
+          nightly_rarch="64"
+          ;;
+        "linux/arm64")
+          larch="aarch64"
+          rarch="aarch64"
+          nightly_rarch="aarch64"
+          ;;
+        *)
+          echo "Unsupported platform: $CI_RUNNER_EXECUTABLE_ARCH" >&2
+          exit 1
+          ;;
+      esac
+      if [[ "$JULIA_VERSION" == "nightly" ]]; then
+        url="https://julialangnightlies-s3.julialang.org/bin/linux/$larch/julia-latest-linux$nightly_rarch.tar.gz"
+      else
+        url="https://julialang-s3.julialang.org/bin/linux/$larch/$JULIA_VERSION/julia-$JULIA_VERSION-latest-linux-$rarch.tar.gz"
+      fi
+      curl -L "$url" | tar -C /usr/local --strip-components=1 -zxf -
+      julia -e 'using InteractiveUtils; versioninfo()'
+      JULIA_LLVM_ARGS='--version' julia
+      # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
+      # https://gitlab.com/gitlab-org/gitlab/issues/16343
+      export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+
 
 #
 # Julia versions
 #
 
-.julia:0.7:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/0.7/julia-0.7-latest-linux-x86_64.tar.gz
-        FILENAME=julia-0.7-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/0.7/julia-0.7-latest-linux-aarch64.aarch64.gz
-        FILENAME=julia-0.7-latest-linux-aarch64.aarch64.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/julia.tar.gz
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
-
 .julia:1.0:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.0/julia-1.0-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.0-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.0/julia-1.0-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.0-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.0
+  extends: .install
 
 .julia:1.1:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.1-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.1/julia-1.1-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.1-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.1
+  extends: .install
 
 .julia:1.2:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.2-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.2/julia-1.2-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.2-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.2
+  extends: .install
 
 .julia:1.3:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.3-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.3/julia-1.3-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.3-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.3
+  extends: .install
 
 .julia:1.4:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.4/julia-1.4-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.4-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.4/julia-1.4-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.4-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.4
+  extends: .install
 
 .julia:1.5:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5-latest-linux-x86_64.tar.gz
-        FILENAME=julia-1.5-latest-linux-x86_64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialang-s3.julialang.org/bin/linux/aarch64/1.5/julia-1.5-latest-linux-aarch64.tar.gz
-        FILENAME=julia-1.5-latest-linux-aarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: 1.5
+  extends: .install
 
 .julia:nightly:
-  before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install wget ${CI_APT_INSTALL}
-    - >
-      if [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/amd64" ]; then
-        wget -nv -N -P downloads/ https://julialangnightlies-s3.julialang.org/bin/linux/x64/julia-latest-linux64.tar.gz
-        FILENAME=julia-latest-linux64.tar.gz
-      elif [ "${CI_RUNNER_EXECUTABLE_ARCH}" == "linux/arm64" ]; then
-        wget -nv -N -P downloads/ https://julialangnightlies-s3.julialang.org/bin/linux/aarch64/julia-latest-linuxaarch64.tar.gz
-        FILENAME=julia-latest-linuxaarch64.tar.gz
-      else
-        echo "Unsupported platform:" ${CI_RUNNER_EXECUTABLE_ARCH} >&2
-      fi
-    - tar -C /usr/local -x -z --strip-components=1 -f downloads/${FILENAME}
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+  variables:
+    JULIA_VERSION: nightly
+  extends: .install
 
 .julia:source:
   before_script:
-    - apt-get -qq update
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config rsync
-    # clone to a different folder because julia/deps/srccache might exist already
-    - git clone $CI_CLONE_ARGS https://github.com/JuliaLang/julia julia.git
-    - rsync -a julia.git/ julia/
-    # build
-    - make -C julia -j$(nproc) JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
-    - ln -s $(pwd)/julia/julia /usr/local/bin/julia
-    - julia -e 'using InteractiveUtils; versioninfo()'
-    - JULIA_LLVM_ARGS='--version' julia
-    # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
-    # https://gitlab.com/gitlab-org/gitlab/issues/16343
-    - export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
+    - |
+      apt-get -qq update
+      apt-get -qq -o=Dpkg::Use-Pty=0 -y install git build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config rsync
+      # clone to a different folder because julia/deps/srccache might exist already
+      git clone $CI_CLONE_ARGS https://github.com/JuliaLang/julia julia.git
+      rsync -a julia.git/ julia/
+      # build
+      make -C julia -j$(nproc) JULIA_PRECOMPILE=0 $CI_BUILD_ARGS
+      ln -s $(pwd)/julia/julia /usr/local/bin/julia
+      julia -e 'using InteractiveUtils; versioninfo()'
+      JULIA_LLVM_ARGS='--version' julia
+      # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
+      # https://gitlab.com/gitlab-org/gitlab/issues/16343
+      export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"
 
 
 #
