@@ -119,17 +119,16 @@ cache:
 
 .coverage:
   stage: post
-  script:
-    - julia --color=yes -e 'using Pkg;
-                            Pkg.add("Coverage")'
+  script: |
     # Coverage(Tools).jl scans all .jl files but easily fails at that,
     # so make sure we exclude hidden directories (like the depot, .git, ...)
-    - julia --color=yes -e 'using Coverage;
-                            coverage = vcat(map(process_folder,
-                                                filter(entry->isdir(entry) &&
-                                                              !startswith(entry, "."),
-                                                       readdir(".")))...);
-                            Codecov.submit_local(coverage, ".")'
+    julia --color=yes -e '
+      using Pkg
+      Pkg.add(Coverage")
+      using Coverage
+      dirs = filter(entry -> isdir(entry) && !startswith(entry, "."), readdir())
+      coverage = map(process_folder, dirs)
+      Codecov.submit_local(coverage)'
 
 
 #
@@ -145,13 +144,11 @@ cache:
   variables:
     DOCUMENTER_DEBUG: "true"
     JULIA_LOAD_PATH: "$CI_PROJECT_DIR:$CI_PROJECT_DIR/docs::"
-  script:
-    - apt-get -qq -o=Dpkg::Use-Pty=0 -y install git
-    - julia --project --color=yes -e 'using Pkg;
-                                      Pkg.instantiate()'
-    - julia --project=docs/ --color=yes -e 'using Pkg;
-                                            Pkg.instantiate()'
-    - julia --project=docs/ --color=yes docs/make.jl
+  script: |
+    apt-get -qqy install git
+    julia --project --color=yes -e 'using Pkg; Pkg.instantiate()'
+    julia --project=docs --color=yes -e 'using Pkg; Pkg.instantiate()'
+    julia --project=docs --color=yes docs/make.jl
   artifacts:
     paths:
-    - docs/build
+      - docs/build
