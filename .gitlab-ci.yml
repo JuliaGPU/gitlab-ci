@@ -1,0 +1,19 @@
+.install:
+  script: |
+    eval "$(bash install_julia.sh $JULIA)"
+    hash julia 2> /dev/null
+
+Install Julia 1.0:
+  extends: .install
+  variables:
+    JULIA: '1.0'
+
+Install Julia nightly:
+  extends: .install
+  variables:
+    JULIA: nightly
+
+Install Julia source:
+  extends: .install
+  variables:
+    JULIA: source
