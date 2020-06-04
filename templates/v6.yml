@@ -1,9 +1,3 @@
-stages:
-  - build
-  - test
-  - post
-  - deploy
-
 cache:
   key: ${CI_JOB_NAME}
   paths:
@@ -118,7 +112,7 @@ cache:
 #
 
 .coverage:
-  stage: post
+  stage: deploy
   script: |
     # Coverage(Tools).jl scans all .jl files but easily fails at that,
     # so make sure we exclude hidden directories (like the depot, .git, ...)
@@ -140,7 +134,7 @@ cache:
 #       by setting the load path, giving priority to the main package Manifest.
 
 .documentation:
-  stage: post
+  stage: deploy
   variables:
     DOCUMENTER_DEBUG: "true"
     JULIA_LOAD_PATH: "$CI_PROJECT_DIR:$CI_PROJECT_DIR/docs::"

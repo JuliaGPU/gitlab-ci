@@ -33,7 +33,9 @@ Test Example.jl:
 
 Test documentation:
   extends: .documentation
+  stage: test
   before_script:
     - |
+      eval "$(bash install_julia.sh 1.0)"
       mkdir -p docs
       touch docs/make.jl
