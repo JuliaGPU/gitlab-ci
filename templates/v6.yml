@@ -124,10 +124,10 @@ cache:
     # so make sure we exclude hidden directories (like the depot, .git, ...)
     julia --color=yes -e '
       using Pkg
-      Pkg.add(Coverage")
+      Pkg.add("Coverage")
       using Coverage
       dirs = filter(entry -> isdir(entry) && !startswith(entry, "."), readdir())
-      coverage = map(process_folder, dirs)
+      coverage = vcat(map(process_folder, dirs)...)
       Codecov.submit_local(coverage)'
 
 
