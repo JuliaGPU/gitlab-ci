@@ -3,15 +3,16 @@
 set -euxo pipefail
 
 apt-get -qq update
+DEBIAN_FRONTEND=noninteractive apt-get -qqy install ${CI_APT_INSTALL:-}
 
 if [[ "$1" == "source" ]]; then
   DEBIAN_FRONTEND=noninteractive apt-get -qqy install build-essential cmake curl gfortran git libatomic1 m4 perl pkg-config python rsync > /dev/null
 
   # Clone to a different folder because julia/deps/srccache might exist already.
-  git clone https://github.com/JuliaLang/julia julia.git
+  git clone ${CI_CLONE_ARGS:-} https://github.com/JuliaLang/julia julia.git
   rsync -a julia.git/ julia/
 
-  make -C julia -j$(nproc) JULIA_PRECOMPILE=0 > /dev/null
+  make -C julia -j$(nproc) JULIA_PRECOMPILE=0 ${CI_BUILD_ARGS:-} > /dev/null
   ln -s $(pwd)/julia/julia /usr/local/bin/julia
 else
   apt-get -qqy install curl > /dev/null
