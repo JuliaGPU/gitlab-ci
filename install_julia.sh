@@ -2,11 +2,8 @@
 
 set -euxo pipefail
 
-apt-get -qq update
-DEBIAN_FRONTEND=noninteractive apt-get -qqy install ${CI_APT_INSTALL:-}
-
 if [[ "$1" == "source" ]]; then
-  DEBIAN_FRONTEND=noninteractive apt-get -qqy install build-essential cmake curl gfortran git libatomic1 m4 perl pkg-config python rsync > /dev/null
+  DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential cmake gfortran git libatomic1 m4 perl pkg-config python rsync > /dev/null
 
   # Clone to a different folder because julia/deps/srccache might exist already.
   git clone ${CI_CLONE_ARGS:-} https://github.com/JuliaLang/julia julia.git
@@ -15,7 +12,6 @@ if [[ "$1" == "source" ]]; then
   make -C julia -j$(nproc) JULIA_PRECOMPILE=0 ${CI_BUILD_ARGS:-} > /dev/null
   ln -s $(pwd)/julia/julia /usr/local/bin/julia
 else
-  apt-get -qqy install curl > /dev/null
   case "$CI_RUNNER_EXECUTABLE_ARCH" in
     "linux/amd64")
       larch="x64"
@@ -36,12 +32,15 @@ else
 
   version="$1"
   if [[ "$version" == "nightly" ]]; then
-    url="https://julialangnightlies-s3.julialang.org/bin/linux/$larch/julia-latest-linux$nightly_rarch.tar.gz"
+    filename="julia-latest-linux$nightly_rarch.tar.gz"
+    url="https://julialangnightlies-s3.julialang.org/bin/linux/$larch/$filename"
   else
-    url="https://julialang-s3.julialang.org/bin/linux/$larch/$version/julia-$version-latest-linux-$rarch.tar.gz"
+    filename="julia-$version-latest-linux-$rarch.tar.gz"
+    url="https://julialang-s3.julialang.org/bin/linux/$larch/$version/$filename"
   fi
 
-  curl -sSL "$url" | tar -C /usr/local --strip-components=1 -zxf -
+  wget -nv -NP downloads "$url"
+  tar -C /usr/local --strip-components=1 -zxf "downloads/$filename"
 fi
 
 julia -e 'using InteractiveUtils; versioninfo()' >&2

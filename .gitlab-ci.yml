@@ -3,6 +3,8 @@ include:
 
 .install:
   script: |
+    apt-get -qq update
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install wget
     eval "$(bash install_julia.sh $JULIA)"
     hash julia 2> /dev/null
 
