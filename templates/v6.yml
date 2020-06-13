@@ -13,6 +13,8 @@ cache:
     # global downloads and artifacts
     - .julia/packages/**/deps/usr/downloads
     - .julia/artifacts
+    # generic cache for package resources
+    - .julia/cache
     # julia source build dependency cache
     - julia/deps/srccache
     - julia/deps/srccache/*.tar.gz
