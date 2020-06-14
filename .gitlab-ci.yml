@@ -22,8 +22,6 @@ Install Julia source:
   extends: .install
   variables:
     JULIA: source
-  tags:
-    - intel
 
 Test Example.jl:
   extends: .test
