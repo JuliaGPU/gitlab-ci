@@ -1,0 +1,30 @@
+stages:
+  - setup
+  - rebuild
+
+setup:
+  stage: setup
+  only:
+    - triggers
+  image: python
+  script: |
+    for var in CONTENT_DIR GITHUB_REPOSITORY SSH_KEY; do
+      if [[ ! -v "$var" ]]; then
+        echo "Missing environment variable '$var'"
+      fi
+    done
+    curl -LO https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/make_rebuild_pipeline.py
+    pip install pyyaml
+    python make_rebuild_pipeline.py > rebuild.yml
+  artifacts:
+    paths:
+      - rebuild.yml
+
+rebuild:
+  stage: rebuild
+  trigger:
+    include:
+      - artifact: rebuild.yml
+        job: setup
+  variables:  # TODO: Delete after JuliaGPU/gitlab-ci#20
+    JULIA_PROJECT: "@."

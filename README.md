@@ -139,3 +139,36 @@ When doing development to the templates in this repository, do know that the
 template files as included by GitLab CI/CD configurations are cached. To
 effectively iterate on the template files, be sure to include the commit hash in
 the path to the template files.
+
+
+## Content Rebuilding Pipelines
+
+[SciML/DiffEqTutorials.jl](https://github.com/SciML/DiffEqTutorials.jl) and
+[SciML/DiffEqBenchmarks.jl](https://github.com/SciML/DiffEqBenchmarks.jl)
+both use the same process for keeping their content up to date, which is defined here.
+If you want to apply the same workflow to another repository, here's what you need to do:
+
+* Import your project into JuliaGPU on GitLab as described above
+
+* Add a `.gitlab-ci.yml` file to your repository with the following contents:
+
+```yml
+include: https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/rebuild/v1.yml
+variables:
+  CONTENT_DIR: mycontent  # Required, directory holding your source content
+  GITHUB_REPOSITORY: Owner/Repo  # Required, GitHub user/repository name (no .git)
+  EXCLUDE: folder/file1, folder/file2  # Optional, content to not rebuild automatically
+  NEEDS_GPU: folder/file1, folder/file2  # Optional, content that needs a GPU to build
+  TAGS: tag1, tag2  # Optional, tags to add to GitLab rebuild jobs
+```
+
+* Copy [`templates/rebuild/actions.yml`](templates/rebuild/actions.yml) to `.github/workflows/rebuild.yml` in your repository
+
+* Generate an SSH key pair, and add the public key as a deploy key with write permissions
+  to your GitHub repo. Then, add the private key as a
+  [File environment variable](https://docs.gitlab.com/ee/ci/variables/README.html#custom-environment-variables-of-type-file)
+  with the name `SSH_KEY` in GitLab.
+
+* Find your GitLab project ID and add it as a GitHub secret called `GITLAB_PROJECT`
+
+* Create a Gitlab [pipeline trigger](https://docs.gitlab.com/ee/ci/triggers/#adding-a-new-trigger) and add the token as a GitHub secret called `GITLAB_TOKEN`
