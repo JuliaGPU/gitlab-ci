@@ -172,3 +172,10 @@ variables:
 * Find your GitLab project ID and add it as a GitHub secret called `GITLAB_PROJECT`
 
 * Create a Gitlab [pipeline trigger](https://docs.gitlab.com/ee/ci/triggers/#adding-a-new-trigger) and add the token as a GitHub secret called `GITLAB_TOKEN`
+
+Once all that is done, a random piece of content will be rebuilt and a PR will be opened
+every 3 days. You can also manually rebuild by creating an issue comment with the contents:
+
+```
+!rebuild folder/file
+```
