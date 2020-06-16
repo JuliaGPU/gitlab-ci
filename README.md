@@ -177,5 +177,18 @@ Once all that is done, a random piece of content will be rebuilt and a PR will b
 every 3 days. You can also manually rebuild by creating an issue comment with the contents:
 
 ```
-!rebuild folder/file
+!rebuild file=folder/file
+```
+
+If you want to specify the branch name, for example if you want a PR to be updated,
+you can add the `branch` input:
+
+```
+!rebuild file=folder/file branch=name
+```
+
+You can also manually trigger a random rebuild by simply commenting:
+
+```
+!rebuild
 ```
