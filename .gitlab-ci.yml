@@ -2,6 +2,7 @@ include:
   local: templates/v6.yml
 
 .install:
+  image: ubuntu
   script: |
     apt-get -qq update
     DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install wget
