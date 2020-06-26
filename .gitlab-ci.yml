@@ -1,0 +1,46 @@
+include:
+  local: templates/v6.yml
+
+.install:
+  image: ubuntu
+  script: |
+    apt-get -qq update
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install wget
+    eval "$(bash install_julia.sh $JULIA)"
+    hash julia 2> /dev/null
+
+Install Julia 1.0:
+  extends: .install
+  variables:
+    JULIA: '1.0'
+
+Install Julia nightly:
+  extends: .install
+  variables:
+    JULIA: nightly
+
+Install Julia source:
+  extends: .install
+  variables:
+    JULIA: source
+
+Test Example.jl:
+  extends: .test
+  before_script:
+    - |
+      apt -qq update
+      DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install wget
+      eval "$(bash install_julia.sh 1.0)"
+      julia -e 'using Pkg; Pkg.develop("Example")'
+      export JULIA_PROJECT=$(julia -e 'using Pkg; println(joinpath(Pkg.devdir(), "Example"))')
+
+Test documentation:
+  extends: .documentation
+  stage: test
+  before_script:
+    - |
+      apt -qq update
+      DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install wget
+      eval "$(bash install_julia.sh 1.0)"
+      mkdir -p docs
+      touch docs/make.jl

@@ -28,8 +28,7 @@ On the settings page of your new repo:
   can break in the event of forced pushes (note that it's perfectly fine to keep
   the Github master branch protected)
 
-* CI/CD -> runners settings: make sure available group runners are available and
-  enabled, and shared runners are disabled
+* CI/CD -> runners settings: make sure available group runners are available and enabled.
 
 * Ci/CD -> secret variables: provide a `CODECOV_TOKEN` (optional)
 
@@ -37,8 +36,7 @@ On the settings page of your new repo:
 Now add a `.gitlab-ci.yml` at the root of your repo:
 
 ```yaml
-include:
-  - 'https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6.yml'
+include: https://raw.githubusercontent.com/JuliaGPU/gitlab-ci/master/templates/v6.yml
 
 test:1.0:
   extends:
