@@ -50,6 +50,7 @@ gitignore="$(mktemp)"
 cat <<EOF > "$gitignore"
 .julia/
 downloads/
+install_julia.sh
 EOF
 cat <<EOF > ~/.gitconfig
 [core]
