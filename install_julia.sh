@@ -46,6 +46,16 @@ fi
 julia -e 'using InteractiveUtils; versioninfo()' >&2
 JULIA_LLVM_ARGS='--version' julia >&2
 
+gitignore="$(mktemp)"
+cat <<EOF > "$gitignore"
+.julia/
+downloads/
+EOF
+cat <<EOF > ~/.gitconfig
+[core]
+        excludesfile = $gitignore
+EOF
+
 # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
 # https://gitlab.com/gitlab-org/gitlab/issues/16343
 echo 'export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"'
