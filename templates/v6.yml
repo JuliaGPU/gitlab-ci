@@ -95,7 +95,7 @@ cache:
 .test:
   stage: test
   script:
-    - julia --color=yes -e '
+    - julia --project --color=yes -e '
         using Pkg;
         Pkg.instantiate();
         Pkg.build();

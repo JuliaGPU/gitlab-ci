@@ -60,4 +60,3 @@ EOF
 # https://gitlab.com/gitlab-org/gitlab-runner/issues/327
 # https://gitlab.com/gitlab-org/gitlab/issues/16343
 echo 'export JULIA_DEPOT_PATH="$CI_PROJECT_DIR/.julia"'
-echo 'export JULIA_PROJECT="@."'
