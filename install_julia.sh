@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -euo pipefail
 
 if [[ "$1" == "source" ]]; then
   DEBIAN_FRONTEND=noninteractive apt-get -qqy -o=Dpkg::Use-Pty=0 install build-essential cmake gfortran git libatomic1 m4 perl pkg-config python rsync > /dev/null
