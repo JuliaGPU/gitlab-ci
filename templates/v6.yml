@@ -94,12 +94,12 @@ cache:
 
 .test:
   stage: test
-  script:
-    - julia --project --color=yes -e '
-        using Pkg;
-        Pkg.instantiate();
-        Pkg.build();
-        Pkg.test(; coverage=true);'
+  script: |
+    julia --project --color=yes -e '
+      using Pkg;
+      Pkg.instantiate();
+      Pkg.build();
+      Pkg.test(; coverage=true);'
   interruptible: true
   after_script:
     - shopt -s globstar; for f in ./**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
