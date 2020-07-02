@@ -43,6 +43,11 @@ test:1.0:
     - .julia:1.0
     - .test
 
+test:1.x:
+  extends: 
+    - .julia:1
+    - .test
+
 test:nightly:
   extends:
     - .julia:nightly
