@@ -100,6 +100,7 @@ cache:
         Pkg.instantiate();
         Pkg.build();
         Pkg.test(; coverage=true);'
+  interruptible: true
   after_script:
     - shopt -s globstar; for f in ./**/*.cov; do mv "$f" "${f%.cov}.$CI_JOB_ID.cov"; done
   artifacts:
@@ -131,6 +132,7 @@ cache:
       dirs = filter(entry -> isdir(entry) && !startswith(entry, "."), readdir())
       coverage = vcat(map(process_folder, dirs)...)
       Codecov.submit_local(coverage)'
+  interruptible: true
 
 
 #
@@ -151,6 +153,7 @@ cache:
     julia --project --color=yes -e 'using Pkg; Pkg.instantiate()'
     julia --project=docs --color=yes -e 'using Pkg; Pkg.instantiate()'
     julia --project=docs --color=yes docs/make.jl
+  interruptible: true
   artifacts:
     paths:
       - docs/build
