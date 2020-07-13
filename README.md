@@ -22,8 +22,6 @@ Your project also needs to be part of the GitLab JuliaGPU group:
 
 On the settings page of your new repo:
 
-* general: change the project visibility to `Public`
-
 * repository -> protected branches: unprotect the `master` branch, or mirroring
   can break in the event of forced pushes (note that it's perfectly fine to keep
   the Github master branch protected)
@@ -44,7 +42,7 @@ test:1.0:
     - .test
 
 test:1.x:
-  extends: 
+  extends:
     - .julia:1
     - .test
 
@@ -55,20 +53,12 @@ test:nightly:
   allow_failure: true
 ```
 
-Each job extends two existing recipes: a `.julia` recipe that downloads Julia, and a `.test`
-target that defines the basic testing harness. These jobs will run on the default image as
-registered by the CI runner, typically an image without GPU support. To actually run make
-use of the GPU, specify an appropriate image and request a runner with a GPU as follows:
-
-```yaml
-test:1.0:
-  extends:
-    - .julia:1.0
-    - .test
-  tags:
-    - nvidia
-  image: nvidia/cuda:latest
-```
+Each job extends two existing recipes: a `.julia` recipe that downloads Julia,
+and a `.test` target that defines the basic testing harness. These jobs will run
+on the default image as registered by the CI runner, typically an image by
+NVIDIA providing the latest CUDA toolkit supported by the driver on the runner.
+There is normally no need to change the `image` (unless, e.g., you want to force
+use of artifacts by using a plain `ubuntu` image).
 
 The repository also defines recipes for other common operations:
 
@@ -123,17 +113,17 @@ status = [
 
 
 
-## Group runners
+## Runner tags
 
-The following runners are shared with the JuliaGPU group:
+Several runners are available to the JuliaGPU group, and you can use the
+following tags to select specific ones:
 
-* `hydor.elis.ugent.be`: Pascal GTX 1080 & Turing RTX 20180 Ti, 64-bit Linux
-* `ripper.elis.ugent.be`: Kepler GTX Titan, 64-bit Linux
-
-Note that you need to disable shared runners on your repository in Gitlab
-(in `Settings/CI / CD`) - otherwise, you may run on a Gitlab shared runner,
-instead off a JuliaGPU one.  Gitlab shared runners usually do not have GPUs.
-
+* `latest`: select a runner with compute capability >= 7.0, for use of recent
+  features like WMMA. More specific tags are available too, e.g. `sm_75`, but
+  that does not allow specifying a minimum or maximum capability.
+* `cuda_11.0`, etc.: to select a runner that's compatible with a specific CUDA
+  version.
+* `intel`: runners that support Intel oneAPI. These runners contain Gen9 IGPs.
 
 
 ## Hacking
