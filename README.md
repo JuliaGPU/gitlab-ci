@@ -40,16 +40,22 @@ test:1.0:
   extends:
     - .julia:1.0
     - .test
+  tags:
+      - nvidia
 
 test:1.x:
   extends:
     - .julia:1
     - .test
+  tags:
+      - nvidia
 
 test:nightly:
   extends:
     - .julia:nightly
     - .test
+  tags:
+      - nvidia
   allow_failure: true
 ```
 
@@ -118,6 +124,7 @@ status = [
 Several runners are available to the JuliaGPU group, and you can use the
 following tags to select specific ones:
 
+* `nvidia`: runners that support NVIDIA CUDA.
 * `latest`: select a runner with compute capability >= 7.0, for use of recent
   features like WMMA. More specific tags are available too, e.g. `sm_75`, but
   that does not allow specifying a minimum or maximum capability.
