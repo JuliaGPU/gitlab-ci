@@ -1,5 +1,9 @@
 # JuliaGPU GitLab CI
 
+**NOTE: JuliaGPU CI is moving to Buildkite. See
+[JuliaGPU/buildkite](https://github.com/JuliaGPU/buildkite) for instructions
+on how to use the new system.**
+
 This repository contains instructions and resources related to the GitLab CI
 infrastructure for the JuliaGPU organization. It can be used to add GPU CI
 to Julia packages, as long as there's a publicly-accessible git repository.
